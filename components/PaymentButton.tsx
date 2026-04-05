@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PRICING } from '@/lib/paypal';
+import { PRICING } from '@/lib/pricing';
 
 interface PaymentButtonProps {
   planId: keyof typeof PRICING;
