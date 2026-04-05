@@ -6,15 +6,15 @@ interface BlogCardProps {
   featured?: boolean;
 }
 
-// Cover image gradient presets per category
+// Cover image gradient presets per category (vibrant)
 const categoryGradients: Record<string, string> = {
-  'Attachment Theory': 'from-blue-100 to-indigo-100',
-  'Assessment': 'from-purple-100 to-pink-100',
-  'Understanding': 'from-green-100 to-teal-100',
-  'Anxious Attachment': 'from-orange-100 to-red-100',
-  'Avoidant Attachment': 'from-gray-100 to-slate-100',
-  'Secure Attachment': 'from-emerald-100 to-green-100',
-  'Introduction': 'from-blue-50 to-purple-50',
+  'Attachment Theory': 'from-blue-600 via-indigo-500 to-purple-600',
+  'Assessment': 'from-purple-600 via-pink-500 to-rose-600',
+  'Understanding': 'from-emerald-500 via-teal-500 to-cyan-500',
+  'Anxious Attachment': 'from-orange-500 via-red-500 to-pink-500',
+  'Avoidant Attachment': 'from-slate-600 via-gray-500 to-zinc-500',
+  'Secure Attachment': 'from-emerald-600 via-green-500 to-teal-500',
+  'Introduction': 'from-blue-500 via-violet-500 to-purple-500',
 };
 
 const categoryEmojis: Record<string, string> = {
@@ -28,7 +28,7 @@ const categoryEmojis: Record<string, string> = {
 };
 
 function getGradient(category: string): string {
-  return categoryGradients[category] || 'from-blue-100 to-purple-100';
+  return categoryGradients[category] || 'from-blue-500 via-indigo-500 to-purple-600';
 }
 
 function getEmoji(category: string): string {
@@ -40,21 +40,67 @@ export default function BlogCard({ post, featured = false }: BlogCardProps) {
   const emoji = getEmoji(post.category);
 
   return (
-    <article className={`group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-blue-50/50 hover:border-blue-100 transition-all duration-300 ${featured ? 'ring-2 ring-blue-100' : ''}`}>
+    <article className={`group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-blue-100/60 hover:border-blue-200 transition-all duration-300 ${featured ? 'ring-2 ring-blue-200' : ''}`}>
       <Link href={`/blog/${post.slug}`} className="block">
-        {/* Cover Image Placeholder */}
-        <div className={`h-44 bg-gradient-to-br ${gradient} flex items-center justify-center relative overflow-hidden`}>
-          <span className="text-5xl opacity-60 group-hover:scale-110 transition-transform duration-300">{emoji}</span>
-          {/* Decorative shapes */}
-          <div className="absolute top-4 right-4 w-16 h-16 bg-white/20 rounded-full blur-xl"></div>
-          <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/10 rounded-full blur-lg"></div>
+        {/* Cover Image Area */}
+        <div className={`h-48 relative overflow-hidden ${post.coverImage ? '' : `bg-gradient-to-br ${gradient}`}`}>
+          {post.coverImage ? (
+            <>
+              <img 
+                src={post.coverImage} 
+                alt={post.title} 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+              />
+              {/* Gradient overlay for better text contrast */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+              {/* Reading time badge */}
+              {post.readingTime && (
+                <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/40 backdrop-blur-sm text-white text-xs font-medium rounded-full flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {post.readingTime}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Emoji center */}
+              <span className="absolute inset-0 flex items-center justify-center text-6xl opacity-50 group-hover:scale-110 transition-transform duration-300 drop-shadow-lg">{emoji}</span>
+              
+              {/* Decorative circles */}
+              <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+              <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-white/10 rounded-full blur-xl" />
+              <div className="absolute top-4 left-4 w-2 h-2 bg-white/30 rounded-full" />
+              <div className="absolute top-12 right-12 w-3 h-3 bg-white/20 rounded-full" />
+              <div className="absolute bottom-8 left-8 w-1.5 h-1.5 bg-white/25 rounded-full" />
+              
+              {/* Decorative lines */}
+              <div className="absolute top-0 right-0 w-20 h-px bg-gradient-to-l from-white/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-16 h-px bg-gradient-to-r from-white/20 to-transparent" />
+              
+              {/* Reading time badge */}
+              {post.readingTime && (
+                <div className="absolute top-3 right-3 px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-medium rounded-full flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {post.readingTime}
+                </div>
+              )}
+            </>
+          )}
+          
+          {/* Category badge */}
+          <div className="absolute bottom-3 left-3">
+            <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-gray-800 text-xs font-semibold rounded-full shadow-sm border border-white/50">
+              {post.category}
+            </span>
+          </div>
         </div>
         
         <div className="p-6">
           <div className="flex items-center gap-3 mb-3 flex-wrap">
-            <span className="px-3 py-1 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">
-              {post.category}
-            </span>
             <time className="text-xs text-gray-500">
               {new Date(post.date).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -62,12 +108,9 @@ export default function BlogCard({ post, featured = false }: BlogCardProps) {
                 day: 'numeric'
               })}
             </time>
-            {post.readingTime && (
-              <span className="text-xs text-gray-400 flex items-center gap-1">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {post.readingTime}
+            {post.featured && (
+              <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-xs font-semibold rounded-full border border-amber-100">
+                Featured
               </span>
             )}
           </div>
@@ -98,7 +141,7 @@ export default function BlogCard({ post, featured = false }: BlogCardProps) {
 
           <div className="flex items-center justify-between pt-3 border-t border-gray-50">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-7 h-7 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
                 {post.author.charAt(0)}
               </div>
               <span className="text-xs text-gray-600">{post.author}</span>

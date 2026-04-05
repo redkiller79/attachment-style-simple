@@ -5,6 +5,15 @@ import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
 
+// Unsplash cover images for posts
+const postCovers: Record<string, string> = {
+  'attachment-style-test': 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800',
+  'how-to-know-your-attachment-style': 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=800',
+  'anxious-attachment-signs': 'https://images.unsplash.com/photo-1494774157365-9e04c6723555?w=800',
+  'the-four-attachment-styles': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+  'welcome-to-our-blog': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800',
+};
+
 const postsDirectory = path.join(process.cwd(), 'content/posts');
 
 export interface PostMetadata {
@@ -17,6 +26,7 @@ export interface PostMetadata {
   featured: boolean;
   readingTime?: string;
   slug: string;
+  coverImage?: string;
 }
 
 export interface Post extends PostMetadata {
@@ -38,6 +48,7 @@ export function getAllPosts(): PostMetadata[] {
       
       return {
         slug,
+        coverImage: postCovers[slug] || undefined,
         ...matterResult.data as Omit<PostMetadata, 'slug'>
       } as PostMetadata;
     });
