@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     description: "Discover your attachment style with our research-based assessment.",
     type: "website",
   },
+  alternates: {
+    canonical: "https://bondtype.com/",
+  },
 };
 
 export default function RootLayout({

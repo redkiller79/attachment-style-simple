@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 font-sans">
@@ -65,9 +67,9 @@ export default function Home() {
                 <span>AI-powered personalized summary</span>
               </li>
             </ul>
-            <button className="w-full bg-white text-blue-600 font-bold py-4 px-6 rounded-xl hover:bg-gray-100 transition-colors text-lg">
+            <Link href="/assessment" className="block w-full bg-white text-blue-600 font-bold py-4 px-6 rounded-xl hover:bg-gray-100 transition-colors text-lg text-center">
               Start Free Assessment
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -97,9 +99,9 @@ export default function Home() {
             Join thousands who have discovered their attachment style and transformed their relationships.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-blue-700 transition-colors text-lg">
+            <Link href="/assessment" className="bg-blue-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-blue-700 transition-colors text-lg">
               Take Assessment Now
-            </button>
+            </Link>
             <button className="bg-white text-blue-600 font-bold py-4 px-8 rounded-xl border-2 border-blue-600 hover:bg-blue-50 transition-colors text-lg">
               Learn More
             </button>

@@ -1,0 +1,376 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import PaymentButton from '@/components/PaymentButton';
+import Link from 'next/link';
+
+type AttachmentStyle = 'Secure' | 'Anxious' | 'Fearful' | 'Dismissive';
+
+interface StyleInfo {
+  name: AttachmentStyle;
+  color: string;
+  bgColor: string;
+  icon: string;
+  description: string;
+  characteristics: string[];
+  strengths: string[];
+  growthAreas: string[];
+}
+
+const STYLE_INFO: Record<AttachmentStyle, StyleInfo> = {
+  Secure: {
+    name: 'Secure',
+    color: 'text-green-600',
+    bgColor: 'bg-green-100 border-green-200',
+    icon: '🔐',
+    description: 'You are comfortable with intimacy and independence. You can form healthy, balanced relationships and communicate your needs effectively.',
+    characteristics: [
+      'Comfortable with emotional closeness',
+      'Trusting of partners',
+      'Can communicate needs openly',
+      'Handles conflict constructively',
+      'Comfortable being alone sometimes',
+    ],
+    strengths: [
+      'Healthy relationship patterns',
+      'Emotional regulation',
+      'Effective communication',
+      'Built-in trust baseline',
+    ],
+    growthAreas: [
+      'Continue nurturing relationship skills',
+      'Maintain boundaries while staying open',
+      'Practice vulnerability in safe relationships',
+    ],
+  },
+  Anxious: {
+    name: 'Anxious',
+    color: 'text-yellow-600',
+    bgColor: 'bg-yellow-100 border-yellow-200',
+    icon: '💛',
+    description: 'You crave closeness but often fear abandonment. You may feel anxious when your partner needs space and worry they don\'t love you enough.',
+    characteristics: [
+      'Often worries about relationship stability',
+      'Needs frequent reassurance',
+      'Fear of abandonment',
+      'Can be emotionally demanding',
+      'Highly attuned to partner\'s moods',
+    ],
+    strengths: [
+      'Deep emotional awareness',
+      'Strong desire for connection',
+      'Attentive to partner\'s needs',
+      'Passionate about relationships',
+    ],
+    growthAreas: [
+      'Build self-esteem independent of relationships',
+      'Learn to tolerate uncertainty',
+      'Develop emotional regulation skills',
+      'Practice trusting partners',
+    ],
+  },
+  Fearful: {
+    name: 'Fearful',
+    color: 'text-red-600',
+    bgColor: 'bg-red-100 border-red-200',
+    icon: '🔮',
+    description: 'You have mixed feelings about closeness — you want it but also fear it. You may oscillate between seeking intimacy and pushing people away.',
+    characteristics: [
+      'Ambivalent about intimacy',
+      'Fears both abandonment and closeness',
+      'May have inconsistent relationship patterns',
+      'Heightened emotional reactivity',
+      'Difficulty trusting others',
+    ],
+    strengths: [
+      'Deep understanding of emotional complexity',
+      'Strong intuition about danger',
+      'Rich inner emotional life',
+      'Ability to empathize deeply',
+    ],
+    growthAreas: [
+      'Work through past trauma or attachment wounds',
+      'Build consistent relationship patterns',
+      'Learn to regulate emotional swings',
+      'Develop stable self-worth',
+    ],
+  },
+  Dismissive: {
+    name: 'Dismissive',
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-100 border-purple-200',
+    icon: '🛡️',
+    description: 'You value independence and self-reliance. You may minimize the importance of relationships and feel uncomfortable with too much closeness.',
+    characteristics: [
+      'Values independence over intimacy',
+      'Dislikes vulnerability',
+      'May dismiss emotional needs',
+      'Comfortable with distance',
+      'Self-contained and self-sufficient',
+    ],
+    strengths: [
+      'Strong sense of self',
+      'Healthy independence',
+      'Emotional resilience',
+      'Clear boundaries',
+    ],
+    growthAreas: [
+      'Allow more vulnerability in relationships',
+      'Recognize the value of interdependence',
+      'Practice emotional openness',
+      'Challenge dismissive beliefs',
+    ],
+  },
+};
+
+const PRICING_PLANS = [
+  {
+    planId: 'BASIC' as const,
+    name: 'Basic Report',
+    price: 12,
+    description: 'Your attachment style analysis',
+    features: [
+      'Complete attachment style analysis',
+      'Personalized insights',
+      'PDF report download',
+    ],
+    featured: false,
+  },
+  {
+    planId: 'PREMIUM' as const,
+    name: 'Premium Report',
+    price: 15,
+    description: 'Detailed analysis with recommendations',
+    features: [
+      'Everything in Basic',
+      'Detailed relationship patterns',
+      'Personalized recommendations',
+      'Priority email support',
+    ],
+    featured: true,
+  },
+  {
+    planId: 'COMPLETE' as const,
+    name: 'Complete Report',
+    price: 19,
+    description: 'Full analysis with improvement plan',
+    features: [
+      'Everything in Premium',
+      '8-week improvement plan',
+      'AI coaching chatbot',
+      'Unlimited revisions',
+    ],
+    featured: false,
+  },
+];
+
+export default function ResultPage() {
+  const [style, setStyle] = useState<AttachmentStyle | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if assessment was completed
+    const completed = localStorage.getItem('assessmentCompleted');
+    const savedStyle = localStorage.getItem('attachmentStyle') as AttachmentStyle | null;
+    
+    if (completed && savedStyle) {
+      setStyle(savedStyle);
+    } else {
+      // Default to Secure for demo if no assessment data
+      setStyle('Secure');
+      localStorage.setItem('assessmentCompleted', 'true');
+      localStorage.setItem('attachmentStyle', 'Secure');
+    }
+    
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading || !style) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  const styleInfo = STYLE_INFO[style];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Result Header */}
+        <div className="text-center mb-12">
+          <p className="text-blue-600 font-semibold mb-2">Your Attachment Style Is</p>
+          <h1 className={`text-5xl font-bold ${styleInfo.color} mb-4`}>
+            {styleInfo.icon} {style}
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            {styleInfo.description}
+          </p>
+        </div>
+
+        {/* Blurred Preview Section (Paywall) */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 relative overflow-hidden">
+          {/* Blur overlay */}
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="text-center z-20">
+              <div className="text-6xl mb-4">🔒</div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Unlock Your Full Report</h2>
+              <p className="text-gray-600 mb-6 max-w-md">
+                See the complete analysis, detailed characteristics, and personalized recommendations by choosing a plan below.
+              </p>
+              <button
+                onClick={() => setShowPaywall(true)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+              >
+                View Pricing Plans
+              </button>
+            </div>
+          </div>
+
+          {/* Blurred content preview */}
+          <div className="blur-[8px] opacity-50">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Key Characteristics</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                {styleInfo.characteristics.map((char, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-700">{char}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-bold text-green-600 mb-3">Your Strengths</h3>
+                <ul className="space-y-2">
+                  {styleInfo.strengths.map((strength, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="text-green-500">✓</span>
+                      <span className="text-gray-700">{strength}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-orange-600 mb-3">Growth Areas</h3>
+                <ul className="space-y-2">
+                  {styleInfo.growthAreas.map((area, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="text-orange-500">→</span>
+                      <span className="text-gray-700">{area}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Pricing Section */}
+        {showPaywall && (
+          <div className="animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Report Plan</h2>
+              <p className="text-gray-600">Unlock your complete attachment style analysis</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {PRICING_PLANS.map((plan) => (
+                <div
+                  key={plan.planId}
+                  className={`bg-white rounded-2xl shadow-lg overflow-hidden ${
+                    plan.featured ? 'border-2 border-blue-500 relative transform md:scale-105' : 'border border-gray-200'
+                  }`}
+                >
+                  {plan.featured && (
+                    <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
+                      Most Popular
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                    <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
+                      <span className="text-gray-600"> USD</span>
+                    </div>
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="text-gray-600 text-sm">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <PaymentButton
+                      planId={plan.planId}
+                      testResultId={style}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Trust badges */}
+            <div className="flex justify-center items-center gap-8 text-gray-500 text-sm">
+              <div className="flex items-center gap-2">
+                <span>🔒</span> Secure Payment
+              </div>
+              <div className="flex items-center gap-2">
+                <span>💳</span> PayPal
+              </div>
+              <div className="flex items-center gap-2">
+                <span>↩️</span> 30-Day Refund
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Default pricing (collapsed) */}
+        {!showPaywall && (
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">Get your complete analysis with detailed insights and recommendations</p>
+            <button
+              onClick={() => setShowPaywall(true)}
+              className="bg-blue-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-blue-700 transition-colors"
+            >
+              View Pricing Plans
+            </button>
+          </div>
+        )}
+
+        {/* Retake Test */}
+        <div className="text-center mt-12">
+          <Link
+            href="/assessment"
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
+            ← Retake Assessment
+          </Link>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-12 text-center text-gray-500 text-sm">
+          <p>Server status: ✅ Running | bondtype.com</p>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out;
+        }
+      `}</style>
+    </div>
+  );
+}
