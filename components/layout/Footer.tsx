@@ -5,17 +5,12 @@ const footerLinks = {
     { name: 'Assessment', href: '/test' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Features', href: '/#features' },
-    { name: 'FAQ', href: '/faq' },
   ],
   Resources: [
     { name: 'Blog', href: '/blog' },
-    { name: 'Research', href: '/research' },
-    { name: 'Glossary', href: '/glossary' },
-    { name: 'Tools', href: '/tools' },
   ],
   Company: [
     { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
     { name: 'Privacy', href: '/privacy' },
     { name: 'Terms', href: '/terms' },
   ],
@@ -23,7 +18,6 @@ const footerLinks = {
     { name: 'Twitter', href: 'https://twitter.com' },
     { name: 'LinkedIn', href: 'https://linkedin.com' },
     { name: 'Instagram', href: 'https://instagram.com' },
-    { name: 'Newsletter', href: '/newsletter' },
   ],
 };
 
@@ -47,14 +41,20 @@ export default function Footer() {
               to help you build healthier relationships.
             </p>
             <div className="flex space-x-4">
-              {['Twitter', 'LinkedIn', 'Instagram'].map((social) => (
+              {[
+                { name: 'Twitter', href: 'https://twitter.com' },
+                { name: 'LinkedIn', href: 'https://linkedin.com' },
+                { name: 'Instagram', href: 'https://instagram.com' },
+              ].map((social) => (
                 <a
-                  key={social}
-                  href="#"
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                  aria-label={social}
+                  aria-label={social.name}
                 >
-                  <span className="font-semibold">{social.charAt(0)}</span>
+                  <span className="font-semibold">{social.name.charAt(0)}</span>
                 </a>
               ))}
             </div>
@@ -119,9 +119,6 @@ export default function Footer() {
               </Link>
               <Link href="/terms" className="text-gray-400 hover:text-white text-sm">
                 Terms of Service
-              </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white text-sm">
-                Cookie Policy
               </Link>
             </div>
           </div>
