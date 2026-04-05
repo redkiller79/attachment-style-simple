@@ -2,7 +2,7 @@
 title: "Welcome to Our Attachment Style Blog"
 description: "Discover insights about relationships, attachment theory, and personal growth through our research-based articles."
 date: "2026-04-05"
-author: "Attachment Style Team"
+author: "The BondType Team"
 category: "Introduction"
 tags: ["welcome", "attachment theory", "relationships", "blog"]
 featured: true

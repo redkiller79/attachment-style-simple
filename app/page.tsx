@@ -1,5 +1,11 @@
 import Link from 'next/link';
 import SubscribeForm from '@/components/SubscribeForm';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'BondType - Free Attachment Style Assessment',
+  description: 'Discover your attachment style with our scientifically-validated 20-question assessment. Understand how you form relationships and build healthier connections.',
+};
 
 export default function Home() {
   return (

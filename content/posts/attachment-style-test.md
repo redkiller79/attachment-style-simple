@@ -2,7 +2,7 @@
 title: "Attachment Style Test: The Science-Backed Way to Decode Your Relationship Patterns"
 description: "Take our evidence-based attachment style assessment and discover the unconscious patterns shaping your relationships — with actionable guidance to build healthier connections."
 date: "2026-04-05"
-author: "Dr. Relationship Expert"
+author: "The BondType Team"
 category: "Assessment"
 tags: ["attachment style test", "attachment style quiz", "relationship attachment test", "attachment patterns", "assessment"]
 featured: true

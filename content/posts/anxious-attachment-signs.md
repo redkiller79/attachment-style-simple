@@ -2,11 +2,11 @@
 title: "Anxious Attachment Signs: 15 Patterns That Signal It's Time to Look Closer"
 description: "Recognize the 15 most common signs of anxious attachment — with the psychological research behind them and a practical roadmap for developing earned security."
 date: "2026-04-05"
-author: "Dr. Relationship Expert"
+author: "The BondType Team"
 category: "Anxious Attachment"
 tags: ["anxious attachment signs", "signs of anxious attachment", "anxious attachment symptoms", "anxious preoccupied attachment", "attachment patterns"]
 featured: false
-readingTime: "9 min read
+readingTime: "9 min read"
 ---
 
 # Anxious Attachment Signs: 15 Patterns That Signal It's Time to Look Closer

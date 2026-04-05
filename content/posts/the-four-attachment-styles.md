@@ -2,7 +2,7 @@
 title: "The Four Attachment Styles: Secure, Anxious, Avoidant, and Fearful"
 description: "A comprehensive guide to the four main attachment styles - how they develop, their characteristics, and how they affect relationships."
 date: "2026-04-05"
-author: "Dr. Relationship Expert"
+author: "The BondType Team"
 category: "Attachment Theory"
 tags: ["secure attachment", "anxious attachment", "avoidant attachment", "fearful attachment", "relationships"]
 featured: true
