@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "@supabase/supabase-js": "^2.101.1",
     "gray-matter": "^4.0.3",
     "next": "16.2.2",

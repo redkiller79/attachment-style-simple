@@ -1,17 +1,23 @@
 // PayPal API 集成
-// 生产环境配置
+// 使用环境变量配置，支持 sandbox 和 live 环境
 
-// const PAYPAL_API_BASE = 'https://api-m.sandbox.paypal.com'; // 沙盒环境
-const PAYPAL_API_BASE = 'https://api-m.paypal.com'; // 生产环境
+const PAYPAL_ENVIRONMENT = process.env.PAYPAL_ENVIRONMENT || 'sandbox';
 
-// 生产 API 凭据
-const PAYPAL_CLIENT_ID = 'AbJQEnYWxAKVi4d0IdrriFR8flbKbNtl3_Kuu_iflOQ-Ykp5mv1kK7V_Nkbiibf4ByNByaijSJ4p33Kf';
-const PAYPAL_CLIENT_SECRET = 'ECPGwko4wuqJHHWHmVuQCbVQ2dPJX5ujNcMx1Z76084Sm6D3fdlV3uLRkT9VTJVEgu8e9ntYsvyL3BOx';
+const PAYPAL_API_BASE = PAYPAL_ENVIRONMENT === 'live'
+  ? 'https://api-m.paypal.com'
+  : 'https://api-m.sandbox.paypal.com';
+
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
+
+if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+  throw new Error('Missing PayPal credentials: PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET must be set');
+}
 
 // 获取 Access Token
 async function getAccessToken(): Promise<string> {
   const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
-  
+
   const response = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
     method: 'POST',
     headers: {
@@ -34,6 +40,8 @@ async function getAccessToken(): Promise<string> {
 export async function createOrder(amount: number, currency: string = 'USD', description: string = 'Attachment Style Report') {
   const accessToken = await getAccessToken();
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
   const response = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
     method: 'POST',
     headers: {
@@ -55,8 +63,8 @@ export async function createOrder(amount: number, currency: string = 'USD', desc
         brand_name: 'Attachment Style Assessment',
         landing_page: 'BILLING',
         user_action: 'PAY_NOW',
-        return_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/result/success`,
-        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/result/cancel`,
+        return_url: `${baseUrl}/result/success`,
+        cancel_url: `${baseUrl}/result/cancel`,
       },
     }),
   });
@@ -115,7 +123,6 @@ export async function getOrder(orderId: string) {
 export async function refundPayment(captureId: string, amount: number, currency: string = 'USD') {
   const accessToken = await getAccessToken();
 
-  // 先获取支付详情
   const paymentResponse = await fetch(`${PAYPAL_API_BASE}/v2/payments/captures/${captureId}`, {
     method: 'GET',
     headers: {
@@ -130,7 +137,6 @@ export async function refundPayment(captureId: string, amount: number, currency:
 
   const payment = await paymentResponse.json();
 
-  // 创建退款
   const response = await fetch(`${PAYPAL_API_BASE}/v2/payments/refunds`, {
     method: 'POST',
     headers: {
@@ -158,10 +164,10 @@ export async function refundPayment(captureId: string, amount: number, currency:
 // 验证 Webhook 签名（生产环境需要）
 export function verifyWebhookSignature(payload: string, headers: Record<string, string>): boolean {
   // 沙盒环境跳过验证
-  if (PAYPAL_API_BASE.includes('sandbox')) {
+  if (PAYPAL_ENVIRONMENT === 'sandbox') {
     return true;
   }
-  
+
   // 生产环境需要实现签名验证
   // https://developer.paypal.com/docs/api-basics/notifications/webhook_signature/
   return true;
@@ -177,7 +183,7 @@ export const PRICING = {
     description: 'Basic attachment style analysis with personalized insights',
   },
   PREMIUM: {
-    id: 'premium_report', 
+    id: 'premium_report',
     name: 'Premium Report',
     price: 15.00,
     currency: 'USD',
