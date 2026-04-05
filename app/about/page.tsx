@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { Lock, Shield, Database, Mail } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'About BondType - Our Mission & Story',
@@ -217,25 +218,33 @@ export default function AboutPage() {
 
           <div className="grid md:grid-cols-4 gap-6">
             <div className="bg-white rounded-xl p-6 shadow-md text-center">
-              <div className="text-4xl mb-3">-</div>
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Lock className="w-6 h-6 text-blue-600" />
+              </div>
               <h3 className="font-bold text-gray-900 mb-2">Encryption</h3>
               <p className="text-gray-600 text-sm">Your data is encrypted in transit and at rest</p>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-md text-center">
-              <div className="text-4xl mb-3">-</div>
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="w-6 h-6 text-green-600" />
+              </div>
               <h3 className="font-bold text-gray-900 mb-2">No Selling Data</h3>
               <p className="text-gray-600 text-sm">We never sell personal information to anyone</p>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-md text-center">
-              <div className="text-4xl mb-3">-</div>
+              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Database className="w-6 h-6 text-purple-600" />
+              </div>
               <h3 className="font-bold text-gray-900 mb-2">Minimal Storage</h3>
               <p className="text-gray-600 text-sm">We keep only what we need to operate</p>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-md text-center">
-              <div className="text-4xl mb-3">-</div>
+              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Mail className="w-6 h-6 text-yellow-600" />
+              </div>
               <h3 className="font-bold text-gray-900 mb-2">No Spam</h3>
               <p className="text-gray-600 text-sm">We only email you if you explicitly ask us to</p>
             </div>
