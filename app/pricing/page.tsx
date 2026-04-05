@@ -15,6 +15,7 @@ export default function PricingPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Choose Your Plan
           </h1>
+          {/* Force redeployment */}
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Pick the level of insight that fits what you're looking for.
           </p>
