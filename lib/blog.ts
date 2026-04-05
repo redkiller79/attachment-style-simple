@@ -153,7 +153,6 @@ export function searchPosts(query: string): PostMetadata[] {
     return (
       post.title.toLowerCase().includes(lowerQuery) ||
       post.description.toLowerCase().includes(lowerQuery) ||
-      post.content?.toLowerCase().includes(lowerQuery) ||
       post.tags.some(tag => tag.toLowerCase().includes(lowerQuery)) ||
       post.category.toLowerCase().includes(lowerQuery)
     );
@@ -202,6 +201,5 @@ export function getRSSPosts() {
     author: post.author,
     category: post.category,
     url: `/blog/${post.slug}`,
-    content: post.content || '',
   }));
 }
