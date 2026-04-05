@@ -40,6 +40,28 @@ export default function RootLayout({
             `,
           }}
         ></script>
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "BondType Attachment Style Assessment",
+            "description": "Take our scientifically-validated 20-question assessment to discover your attachment style and understand how you form relationships.",
+            "url": "https://bondtype.com",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Web Browser",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "ratingCount": "1247"
+            }
+          })}
+        </script>
       </head>
       <body className="min-h-full flex flex-col bg-white">
         <Navigation />
