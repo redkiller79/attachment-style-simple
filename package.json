@@ -8,12 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.50",
     "@mailchimp/mailchimp_marketing": "^3.0.80",
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@supabase/supabase-js": "^2.101.1",
     "@types/mailchimp__mailchimp_marketing": "^3.0.22",
     "gray-matter": "^4.0.3",
     "next": "16.2.2",
+    "openai": "^6.33.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remark": "^15.0.1",

@@ -4,6 +4,18 @@ import { useEffect, useState } from 'react';
 import PaymentButton from '@/components/PaymentButton';
 import Link from 'next/link';
 
+interface AIResult {
+  summaries?: string[];
+  report?: {
+    overview?: string;
+    relationshipPatterns?: string;
+    communication?: string;
+    challenges?: string;
+    recommendations?: string[];
+    compatibleDynamics?: string;
+  };
+}
+
 type AttachmentStyle = 'Secure' | 'Anxious' | 'Fearful' | 'Dismissive';
 
 interface StyleInfo {
@@ -168,6 +180,11 @@ export default function ResultPage() {
   const [style, setStyle] = useState<AttachmentStyle | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
+  const [aiDetailedLoading, setAiDetailedLoading] = useState(false);
+  const [aiSummary, setAiSummary] = useState<string[] | null>(null);
+  const [aiDetailedReport, setAiDetailedReport] = useState<AIResult['report'] | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if assessment was completed
@@ -196,6 +213,54 @@ export default function ResultPage() {
 
   const styleInfo = STYLE_INFO[style];
 
+  const generateAiSummary = async () => {
+    setAiSummaryLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch('/api/ai/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          attachmentStyle: style,
+          characteristics: styleInfo.characteristics,
+          strengths: styleInfo.strengths,
+          growthAreas: styleInfo.growthAreas,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate summary');
+      setAiSummary(data.summaries);
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setAiSummaryLoading(false);
+    }
+  };
+
+  const generateDetailedReport = async () => {
+    setAiDetailedLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch('/api/ai/detailed-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          attachmentStyle: style,
+          characteristics: styleInfo.characteristics,
+          strengths: styleInfo.strengths,
+          growthAreas: styleInfo.growthAreas,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate report');
+      setAiDetailedReport(data.report);
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setAiDetailedLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
@@ -208,6 +273,118 @@ export default function ResultPage() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             {styleInfo.description}
           </p>
+        </div>
+
+        {/* AI Analysis Section */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">🤖 AI-Powered Analysis</h2>
+          <p className="text-gray-600 mb-6">Get instant AI-generated insights about your attachment style.</p>
+
+          <div className="flex flex-wrap gap-4 mb-6">
+            <button
+              onClick={generateAiSummary}
+              disabled={aiSummaryLoading}
+              className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {aiSummaryLoading ? (
+                <>
+                  <span className="animate-spin">⏳</span> Generating...
+                </>
+              ) : (
+                <>
+                  <span>📝</span> Generate AI Summary (DeepSeek)
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={generateDetailedReport}
+              disabled={aiDetailedLoading}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {aiDetailedLoading ? (
+                <>
+                  <span className="animate-spin">⏳</span> Generating...
+                </>
+              ) : (
+                <>
+                  <span>📄</span> Generate Detailed Report (Kimi)
+                </>
+              )}
+            </button>
+          </div>
+
+          {aiError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
+              ❌ Error: {aiError}
+            </div>
+          )}
+
+          {aiSummary && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-4">
+              <h3 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
+                <span>📝</span> AI Summary (DeepSeek)
+              </h3>
+              <ul className="space-y-2">
+                {aiSummary.map((item, index) => (
+                  <li key={index} className="flex items-start gap-2 text-blue-900">
+                    <span className="text-blue-500 mt-1">•</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {aiDetailedReport && (
+            <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+              <h3 className="text-lg font-bold text-purple-800 mb-3 flex items-center gap-2">
+                <span>📄</span> Detailed Report (Kimi AI)
+              </h3>
+              <div className="space-y-4 text-purple-900">
+                {aiDetailedReport.overview && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Overview</h4>
+                    <p className="text-sm">{aiDetailedReport.overview}</p>
+                  </div>
+                )}
+                {aiDetailedReport.relationshipPatterns && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Relationship Patterns</h4>
+                    <p className="text-sm">{aiDetailedReport.relationshipPatterns}</p>
+                  </div>
+                )}
+                {aiDetailedReport.communication && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Communication</h4>
+                    <p className="text-sm">{aiDetailedReport.communication}</p>
+                  </div>
+                )}
+                {aiDetailedReport.challenges && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Common Challenges</h4>
+                    <p className="text-sm">{aiDetailedReport.challenges}</p>
+                  </div>
+                )}
+                {aiDetailedReport.recommendations && aiDetailedReport.recommendations.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Recommendations</h4>
+                    <ul className="list-disc list-inside text-sm space-y-1">
+                      {aiDetailedReport.recommendations.map((rec, i) => (
+                        <li key={i}>{rec}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {aiDetailedReport.compatibleDynamics && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Compatible Relationship Dynamics</h4>
+                    <p className="text-sm">{aiDetailedReport.compatibleDynamics}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Blurred Preview Section (Paywall) */}
