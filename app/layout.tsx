@@ -24,7 +24,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">
+      <head>
+        {/* Google Analytics */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-PKDLKQ5SE9"
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-PKDLKQ5SE9');
+            `,
+          }}
+        ></script>
+      </head>
+      <body className="min-h-full flex flex-col bg-white">
         <Navigation />
         <main className="flex-1">{children}</main>
         <Footer />
