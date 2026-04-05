@@ -1,12 +1,12 @@
 // PayPal API 集成
-// 使用沙盒环境进行测试
+// 生产环境配置
 
-const PAYPAL_API_BASE = 'https://api-m.sandbox.paypal.com'; // 沙盒环境
-// const PAYPAL_API_BASE = 'https://api-m.paypal.com'; // 生产环境
+// const PAYPAL_API_BASE = 'https://api-m.sandbox.paypal.com'; // 沙盒环境
+const PAYPAL_API_BASE = 'https://api-m.paypal.com'; // 生产环境
 
-// 沙盒 API 凭据（用户提供）
-const PAYPAL_CLIENT_ID = 'AQ8siwkcc8biu09j4SIF1vBgaqpayniKUvAJ23r5cpQ51B4LVeswdejvmt79dbStFLdPGxs7H1R8jSZ4';
-const PAYPAL_CLIENT_SECRET = 'EJp92mWDIZn4gabbxQQfoZfSov-bh5Fp9CI2Ypnbinqs98iAYp7o-PpK05ZbaFY_L2dkwaQRqAjwUfBm';
+// 生产 API 凭据
+const PAYPAL_CLIENT_ID = 'AbJQEnYWxAKVi4d0IdrriFR8flbKbNtl3_Kuu_iflOQ-Ykp5mv1kK7V_Nkbiibf4ByNByaijSJ4p33Kf';
+const PAYPAL_CLIENT_SECRET = 'ECPGwko4wuqJHHWHmVuQCbVQ2dPJX5ujNcMx1Z76084Sm6D3fdlV3uLRkT9VTJVEgu8e9ntYsvyL3BOx';
 
 // 获取 Access Token
 async function getAccessToken(): Promise<string> {
