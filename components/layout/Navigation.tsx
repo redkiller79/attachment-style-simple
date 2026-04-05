@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { BondLinkLogo } from '../BondLinkLogo';
 
 const navItems = [
   { name: 'Home', href: '/' },
@@ -20,13 +21,8 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">A</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">
-                Attachment<span className="text-blue-600">Style</span>
-              </span>
+            <Link href="/">
+              <BondLinkLogo size={36} showText={true} variant="dark" />
             </Link>
           </div>
 

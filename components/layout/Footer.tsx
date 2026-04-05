@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BondLinkLogo } from '../BondLinkLogo';
 
 const footerLinks = {
   Product: [
@@ -22,13 +23,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">A</span>
-              </div>
-              <span className="text-2xl font-bold">
-                Attachment<span className="text-blue-400">Style</span>
-              </span>
+            <div className="mb-4">
+              <BondLinkLogo size={44} showText={true} variant="light" />
             </div>
             <p className="text-gray-400 mb-6 max-w-md">
               Scientifically-validated attachment style assessment and research-based insights 
