@@ -2,9 +2,8 @@ import Link from 'next/link';
 
 const footerLinks = {
   Product: [
-    { name: 'Assessment', href: '/test' },
+    { name: 'Assessment', href: '/assessment' },
     { name: 'Pricing', href: '/pricing' },
-    { name: 'Features', href: '/#features' },
   ],
   Resources: [
     { name: 'Blog', href: '/blog' },
@@ -13,11 +12,6 @@ const footerLinks = {
     { name: 'About', href: '/about' },
     { name: 'Privacy', href: '/privacy' },
     { name: 'Terms', href: '/terms' },
-  ],
-  Connect: [
-    { name: 'Twitter', href: 'https://twitter.com' },
-    { name: 'LinkedIn', href: 'https://linkedin.com' },
-    { name: 'Instagram', href: 'https://instagram.com' },
   ],
 };
 
@@ -40,24 +34,6 @@ export default function Footer() {
               Scientifically-validated attachment style assessment and research-based insights 
               to help you build healthier relationships.
             </p>
-            <div className="flex space-x-4">
-              {[
-                { name: 'Twitter', href: 'https://twitter.com' },
-                { name: 'LinkedIn', href: 'https://linkedin.com' },
-                { name: 'Instagram', href: 'https://instagram.com' },
-              ].map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-                  aria-label={social.name}
-                >
-                  <span className="font-semibold">{social.name.charAt(0)}</span>
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Links */}
@@ -78,33 +54,6 @@ export default function Footer() {
               </ul>
             </div>
           ))}
-        </div>
-
-        {/* Newsletter */}
-        <div className="mt-12 pt-8 border-t border-gray-800">
-          <div className="max-w-md">
-            <h3 className="font-bold text-lg mb-3">Stay Updated</h3>
-            <p className="text-gray-400 mb-4">
-              Get the latest articles and relationship insights delivered to your inbox.
-            </p>
-            <form className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="flex-1 px-4 py-3 bg-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
-              >
-                Subscribe
-              </button>
-            </form>
-            <p className="text-sm text-gray-500 mt-3">
-              No spam. Unsubscribe anytime.
-            </p>
-          </div>
         </div>
 
         {/* Bottom */}
