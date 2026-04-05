@@ -533,10 +533,7 @@ export default function ResultPage() {
           </Link>
         </div>
 
-        {/* Footer */}
-        <div className="mt-12 text-center text-gray-500 text-sm">
-          <p>Server status: ✅ Running | bondtype.com</p>
-        </div>
+
       </div>
 
       <style jsx>{`

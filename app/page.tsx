@@ -114,11 +114,7 @@ export default function Home() {
           <SubscribeForm />
         </section>
 
-        {/* Footer Note */}
-        <div className="mt-12 text-center text-gray-500 text-sm">
-          <p>This is a simplified English-only version for Western markets. No internationalization framework used.</p>
-          <p className="mt-2">Server status: ✅ Running | Project: Attachment Style Test | Version: Simple English MVP</p>
-        </div>
+
       </main>
     </div>
   );
