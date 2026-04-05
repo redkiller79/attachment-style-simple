@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getAllPosts, getPostBySlug, getRelatedPosts } from '@/lib/blog';
+import ShareButtons from '@/components/ShareButtons';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -104,10 +105,20 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Article Content */}
         <div className="max-w-4xl mx-auto px-4 py-12">
           <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-            {/* Featured Image Placeholder */}
-            <div className="h-64 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl mb-8 flex items-center justify-center">
-              <span className="text-gray-400 text-lg">Article Image</span>
-            </div>
+            {/* Featured Image */}
+            {post.coverImage ? (
+              <div className="rounded-xl mb-8 overflow-hidden">
+                <img
+                  src={post.coverImage}
+                  alt={post.title}
+                  className="w-full h-64 object-cover"
+                />
+              </div>
+            ) : (
+              <div className="h-64 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl mb-8 flex items-center justify-center">
+                <span className="text-gray-400 text-lg">Article Image</span>
+              </div>
+            )}
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2 mb-8">
@@ -130,17 +141,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             {/* Share Section */}
             <div className="mt-12 pt-8 border-t border-gray-200">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Share this article</h3>
-              <div className="flex gap-4">
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                  Share on Twitter
-                </button>
-                <button className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors">
-                  Share on LinkedIn
-                </button>
-                <button className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
-                  Copy Link
-                </button>
-              </div>
+              <ShareButtons title={post.title} url={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://bondtype.com'}/blog/${post.slug}`} />
             </div>
           </div>
 
