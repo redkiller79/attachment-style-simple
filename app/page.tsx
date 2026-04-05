@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SubscribeForm from '@/components/SubscribeForm';
 
 export default function Home() {
   return (
@@ -107,6 +108,11 @@ export default function Home() {
             </button>
           </div>
         </div>
+
+        {/* Newsletter Subscribe */}
+        <section className="mb-16">
+          <SubscribeForm />
+        </section>
 
         {/* Footer Note */}
         <div className="mt-12 text-center text-gray-500 text-sm">
