@@ -188,23 +188,26 @@ export default function ResultClient() {
   const [aiDetailedReport, setAiDetailedReport] = useState<AIResult['report'] | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
   const [paid, setPaid] = useState(false);
+  const [detailedReportPaid, setDetailedReportPaid] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [pdfFilename, setPdfFilename] = useState<string | null>(null);
+  const [detailedReportPaymentLoading, setDetailedReportPaymentLoading] = useState(false);
   
   const searchParams = useSearchParams();
 
+  // Bug #1 Fix: Redirect to /assessment if assessment was not completed
   useEffect(() => {
     const completed = localStorage.getItem('assessmentCompleted');
     const savedStyle = localStorage.getItem('attachmentStyle') as AttachmentStyle | null;
     
-    if (completed && savedStyle) {
-      setStyle(savedStyle);
-    } else {
-      setStyle('Secure');
-      localStorage.setItem('assessmentCompleted', 'true');
-      localStorage.setItem('attachmentStyle', 'Secure');
+    if (!completed || !savedStyle) {
+      // Assessment not completed - redirect to assessment page
+      window.location.href = '/assessment';
+      return;
     }
+    
+    setStyle(savedStyle);
     
     // Check for payment success
     const paymentStatus = searchParams?.get('payment');
@@ -214,11 +217,25 @@ export default function ResultClient() {
       setPaid(true);
       setShowPaywall(false);
       localStorage.setItem('paymentSuccess', planId);
+      
+      // Bug #2 & #3 Fix: If DETAILED_REPORT payment succeeded, unlock detailed report
+      if (planId === 'DETAILED_REPORT') {
+        setDetailedReportPaid(true);
+        localStorage.setItem('detailedReportPaid', 'true');
+        // Automatically generate the detailed report after payment
+        generateDetailedReport();
+      }
     } else {
-      // Check localStorage for previous payment
+      // Check localStorage for previous payments
       const savedPayment = localStorage.getItem('paymentSuccess');
       if (savedPayment) {
         setPaid(true);
+      }
+      
+      // Check if detailed report was previously paid
+      const detailedPaid = localStorage.getItem('detailedReportPaid');
+      if (detailedPaid === 'true') {
+        setDetailedReportPaid(true);
       }
     }
     
@@ -259,6 +276,47 @@ export default function ResultClient() {
     }
   };
 
+  // Bug #2 & #3 Fix: Payment flow for detailed report
+  const handleDetailedReportClick = async () => {
+    if (detailedReportPaid || aiDetailedReport) {
+      // Already paid or already generated - do nothing or scroll to report
+      return;
+    }
+    
+    setDetailedReportPaymentLoading(true);
+    setAiError(null);
+    
+    try {
+      // Call payment API to create order
+      const response = await fetch('/api/payment/paypal/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planId: 'DETAILED_REPORT',
+          testResultId: style,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create payment order');
+      }
+      
+      // Redirect to PayPal approval URL
+      if (data.approvalUrl) {
+        // Save pending payment info
+        localStorage.setItem('pendingOrderId', data.orderId);
+        localStorage.setItem('pendingPlanId', 'DETAILED_REPORT');
+        // Redirect to PayPal
+        window.location.href = data.approvalUrl;
+      }
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'Payment failed');
+      setDetailedReportPaymentLoading(false);
+    }
+  };
+  
   const generateDetailedReport = async () => {
     setAiDetailedLoading(true);
     setAiError(null);
@@ -401,17 +459,30 @@ export default function ResultClient() {
             </button>
 
             <button
-              onClick={generateDetailedReport}
-              disabled={aiDetailedLoading}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              onClick={handleDetailedReportClick}
+              disabled={aiDetailedLoading || detailedReportPaymentLoading || !!aiDetailedReport}
+              className={`bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 relative`}
             >
-              {aiDetailedLoading ? (
+              {detailedReportPaymentLoading ? (
+                <>
+                  <span className="animate-spin">⏳</span> Redirecting to payment...
+                </>
+              ) : aiDetailedLoading ? (
                 <>
                   <span className="animate-spin">⏳</span> Generating...
+                </>
+              ) : aiDetailedReport ? (
+                <>
+                  <span>✓</span> Detailed Report Generated
                 </>
               ) : (
                 <>
                   <span>📄</span> Generate BondType Detailed Report
+                  {!detailedReportPaid && (
+                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold py-1 px-2 rounded-full shadow">
+                      $6.99
+                    </span>
+                  )}
                 </>
               )}
             </button>
