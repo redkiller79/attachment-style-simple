@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 12,
     fontWeight: 600,
+    flexWrap: 'wrap',
   },
   
   // Content sections
@@ -116,8 +117,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionIcon: {
-    fontSize: 18,
+    fontSize: 10,
     marginRight: 8,
+    color: colors.secondary,
+    fontWeight: 600,
   },
   
   // Description box
@@ -132,6 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 1.6,
     color: colors.text,
+    flexWrap: 'wrap',
   },
   
   // Grid layouts
@@ -163,6 +167,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 1.5,
     color: colors.text,
+    flexWrap: 'wrap',
   },
   
   // Checkmark items
@@ -179,6 +184,7 @@ const styles = StyleSheet.create({
   checkText: {
     fontSize: 10,
     color: colors.text,
+    flexWrap: 'wrap',
   },
   
   // Arrow items
@@ -196,6 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: colors.text,
     flex: 1,
+    flexWrap: 'wrap',
   },
   
   // AI Report section
@@ -218,6 +225,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.6,
     color: colors.text,
     marginBottom: 10,
+    flexWrap: 'wrap',
   },
   aiSubtitle: {
     fontSize: 11,
@@ -358,7 +366,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
           </Text>
           <View style={styles.styleBadge}>
             <Text style={styles.styleBadgeText}>
-              {data.styleIcon} {data.style}
+              [Secure] {data.style}
             </Text>
           </View>
         </View>
@@ -368,7 +376,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
           {/* Overview Section */}
           <View style={styles.section}>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.sectionIcon}>📋</Text>
+              <Text style={styles.sectionIcon}>*</Text>
               <Text style={styles.sectionTitle}>Overview</Text>
             </View>
             <View style={styles.descriptionBox}>
@@ -379,7 +387,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
           {/* Key Characteristics */}
           <View style={styles.section}>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.sectionIcon}>✨</Text>
+              <Text style={styles.sectionIcon}>*</Text>
               <Text style={styles.sectionTitle}>Key Characteristics</Text>
             </View>
             <View style={styles.twoColumn}>
@@ -404,7 +412,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
               {/* Strengths */}
               <View style={styles.column}>
                 <View style={styles.sectionTitleRow}>
-                  <Text style={styles.sectionIcon}>💪</Text>
+                  <Text style={styles.sectionIcon}>+</Text>
                   <Text style={styles.sectionTitle}>Your Strengths</Text>
                 </View>
                 {data.strengths.map((item, i) => (
@@ -418,7 +426,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
               {/* Growth Areas */}
               <View style={styles.column}>
                 <View style={styles.sectionTitleRow}>
-                  <Text style={styles.sectionIcon}>🌱</Text>
+                  <Text style={styles.sectionIcon}>{'->'}</Text>
                   <Text style={styles.sectionTitle}>Growth Areas</Text>
                 </View>
                 {data.growthAreas.map((item, i) => (
@@ -435,7 +443,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
           {data.aiReport && (
             <View style={styles.aiSection}>
               <View style={styles.sectionTitleRow}>
-                <Text style={styles.sectionIcon}>🤖</Text>
+                <Text style={styles.sectionIcon}>AI</Text>
                 <Text style={styles.aiSectionTitle}>AI-Powered Detailed Analysis</Text>
               </View>
               
@@ -482,7 +490,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
 
           {/* Highlight Box */}
           <View style={styles.highlightBox}>
-            <Text style={styles.highlightTitle}>💡 Key Insight</Text>
+            <Text style={styles.highlightTitle}>[i] Key Insight</Text>
             <Text style={styles.aiParagraph}>
               Understanding your attachment style is the first step toward building more secure, 
               fulfilling relationships. Your {data.style} attachment style influences how you 
