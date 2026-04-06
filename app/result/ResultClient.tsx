@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PaymentButton from '@/components/PaymentButton';
 import Link from 'next/link';
+import { EmailFormModal } from '@/components/EmailPdfModal';
 
 interface AIResult {
   summaries?: string[];
@@ -78,27 +80,27 @@ const STYLE_INFO: Record<AttachmentStyle, StyleInfo> = {
       'Build self-esteem independent of relationships',
       'Learn to tolerate uncertainty',
       'Develop emotional regulation skills',
-      'Practice trusting partners',
+      'Work through past attachment wounds',
     ],
   },
   Fearful: {
     name: 'Fearful',
     color: 'text-red-600',
     bgColor: 'bg-red-100 border-red-200',
-    icon: '🔮',
-    description: 'You have mixed feelings about closeness — you want it but also fear it. You may oscillate between seeking intimacy and pushing people away.',
+    icon: '😰',
+    description: 'You desire closeness but are also scared of it. You might push people away before they can hurt you, even though you want to connect.',
     characteristics: [
-      'Ambivalent about intimacy',
-      'Fears both abandonment and closeness',
-      'May have inconsistent relationship patterns',
-      'Heightened emotional reactivity',
-      'Difficulty trusting others',
+      'Mixed feelings about intimacy',
+      'Fears being vulnerable',
+      'May sabotage relationships',
+      'Emotional ups and downs',
+      'Difficult trusting others',
     ],
     strengths: [
-      'Deep understanding of emotional complexity',
-      'Strong intuition about danger',
       'Rich inner emotional life',
       'Ability to empathize deeply',
+      'Honest about fears',
+      'Appreciates depth when safe',
     ],
     growthAreas: [
       'Work through past trauma or attachment wounds',
@@ -185,6 +187,12 @@ export default function ResultClient() {
   const [aiSummary, setAiSummary] = useState<string[] | null>(null);
   const [aiDetailedReport, setAiDetailedReport] = useState<AIResult['report'] | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [paid, setPaid] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [pdfFilename, setPdfFilename] = useState<string | null>(null);
+  
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const completed = localStorage.getItem('assessmentCompleted');
@@ -198,8 +206,24 @@ export default function ResultClient() {
       localStorage.setItem('attachmentStyle', 'Secure');
     }
     
+    // Check for payment success
+    const paymentStatus = searchParams?.get('payment');
+    const planId = searchParams?.get('plan');
+    
+    if (paymentStatus === 'success' && planId) {
+      setPaid(true);
+      setShowPaywall(false);
+      localStorage.setItem('paymentSuccess', planId);
+    } else {
+      // Check localStorage for previous payment
+      const savedPayment = localStorage.getItem('paymentSuccess');
+      if (savedPayment) {
+        setPaid(true);
+      }
+    }
+    
     setIsLoading(false);
-  }, []);
+  }, [searchParams]);
 
   if (isLoading || !style) {
     return (
@@ -259,8 +283,87 @@ export default function ResultClient() {
     }
   };
 
+  const generatePDF = async () => {
+    setPdfGenerating(true);
+    try {
+      const response = await fetch('/api/pdf/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          style: style,
+          styleIcon: styleInfo.icon,
+          description: styleInfo.description,
+          characteristics: styleInfo.characteristics,
+          strengths: styleInfo.strengths,
+          growthAreas: styleInfo.growthAreas,
+          aiReport: aiDetailedReport,
+        }),
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to generate PDF');
+      
+      setPdfFilename(data.filename);
+      setShowEmailModal(true);
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'Failed to generate PDF');
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setPaid(true);
+    setShowPaywall(false);
+  };
+
+  // Report data for email
+  const reportDataForEmail = {
+    style,
+    styleIcon: styleInfo.icon,
+    description: styleInfo.description,
+    characteristics: styleInfo.characteristics,
+    strengths: styleInfo.strengths,
+    growthAreas: styleInfo.growthAreas,
+    aiReport: aiDetailedReport || undefined,
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4">
+      {/* Payment Success Banner */}
+      {paid && (
+        <div className="max-w-4xl mx-auto mb-8">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl p-6 shadow-lg">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">🎉</span>
+                <div>
+                  <h3 className="font-bold text-lg">Payment Successful!</h3>
+                  <p className="text-green-100 text-sm">Your report is now unlocked</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={generatePDF}
+                  disabled={pdfGenerating}
+                  className="bg-white text-green-600 font-semibold py-2 px-6 rounded-xl hover:bg-green-50 transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {pdfGenerating ? (
+                    <>
+                      <span className="animate-spin">📄</span> Generating...
+                    </>
+                  ) : (
+                    <>
+                      <span>📄</span> Email PDF Report
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto">
         {/* Result Header */}
         <div className="text-center mb-12">
@@ -273,7 +376,7 @@ export default function ResultClient() {
           </p>
         </div>
 
-        {/* AI Analysis Section */}
+        {/* AI Analysis Section - Always visible */}
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">🤖 AI-Powered Analysis</h2>
           <p className="text-gray-600 mb-6">Get instant AI-generated insights about your attachment style.</p>
@@ -385,29 +488,12 @@ export default function ResultClient() {
           )}
         </div>
 
-        {/* Blurred Preview Section (Paywall) */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 relative overflow-hidden">
-          {/* Blur overlay */}
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center">
-            <div className="text-center z-20">
-              <div className="text-6xl mb-4">🔒</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Unlock Your Full Report</h2>
-              <p className="text-gray-600 mb-6 max-w-md">
-                See the complete analysis, detailed characteristics, and personalized recommendations by choosing a plan below.
-              </p>
-              <button
-                onClick={() => setShowPaywall(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
-              >
-                View Pricing Plans
-              </button>
-            </div>
-          </div>
-
-          {/* Blurred content preview */}
-          <div className="blur-[8px] opacity-50">
+        {/* Content - Conditional based on payment */}
+        {paid ? (
+          /* Full Report - Shown after payment */
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Key Characteristics</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">📋 Key Characteristics</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 {styleInfo.characteristics.map((char, index) => (
                   <div key={index} className="flex items-start gap-3">
@@ -420,7 +506,7 @@ export default function ResultClient() {
 
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-bold text-green-600 mb-3">Your Strengths</h3>
+                <h3 className="text-xl font-bold text-green-600 mb-3">💪 Your Strengths</h3>
                 <ul className="space-y-2">
                   {styleInfo.strengths.map((strength, index) => (
                     <li key={index} className="flex items-start gap-3">
@@ -431,7 +517,7 @@ export default function ResultClient() {
                 </ul>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-orange-600 mb-3">Growth Areas</h3>
+                <h3 className="text-xl font-bold text-orange-600 mb-3">🌱 Growth Areas</h3>
                 <ul className="space-y-2">
                   {styleInfo.growthAreas.map((area, index) => (
                     <li key={index} className="flex items-start gap-3">
@@ -442,11 +528,82 @@ export default function ResultClient() {
                 </ul>
               </div>
             </div>
+            
+            {/* Email PDF Button */}
+            <div className="mt-8 pt-8 border-t border-gray-200 text-center">
+              <p className="text-gray-600 mb-4">Want a beautifully designed PDF report to keep?</p>
+              <button
+                onClick={() => setShowEmailModal(true)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+              >
+                📧 Send PDF to My Email
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* Blurred Preview Section (Paywall) */
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 relative overflow-hidden">
+            {/* Blur overlay */}
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center">
+              <div className="text-center z-20">
+                <div className="text-6xl mb-4">🔒</div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Unlock Your Full Report</h2>
+                <p className="text-gray-600 mb-6 max-w-md">
+                  See the complete analysis, detailed characteristics, and personalized recommendations by choosing a plan below.
+                </p>
+                <button
+                  onClick={() => setShowPaywall(true)}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+                >
+                  View Pricing Plans
+                </button>
+              </div>
+            </div>
+
+            {/* Blurred content preview */}
+            <div className="blur-[8px] opacity-50">
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Key Characteristics</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {styleInfo.characteristics.map((char, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-700">{char}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-xl font-bold text-green-600 mb-3">Your Strengths</h3>
+                  <ul className="space-y-2">
+                    {styleInfo.strengths.map((strength, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="text-green-500">✓</span>
+                        <span className="text-gray-700">{strength}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-orange-600 mb-3">Growth Areas</h3>
+                  <ul className="space-y-2">
+                    {styleInfo.growthAreas.map((area, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <span className="text-orange-500">→</span>
+                        <span className="text-gray-700">{area}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Pricing Section */}
-        {showPaywall && (
+        {showPaywall && !paid && (
           <div className="animate-fade-in">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Report Plan</h2>
@@ -486,6 +643,7 @@ export default function ResultClient() {
                     <PaymentButton
                       planId={plan.planId}
                       testResultId={style}
+                      onSuccess={handlePaymentSuccess}
                       className="w-full"
                     />
                   </div>
@@ -509,7 +667,7 @@ export default function ResultClient() {
         )}
 
         {/* Default pricing (collapsed) */}
-        {!showPaywall && (
+        {!showPaywall && !paid && (
           <div className="text-center">
             <p className="text-gray-600 mb-4">Get your complete analysis with detailed insights and recommendations</p>
             <button
@@ -530,9 +688,15 @@ export default function ResultClient() {
             ← Retake Assessment
           </Link>
         </div>
-
-
       </div>
+
+      {/* Email PDF Modal */}
+      <EmailFormModal
+        isOpen={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        reportData={reportDataForEmail}
+        pdfFilename={pdfFilename || undefined}
+      />
 
       <style jsx>{`
         @keyframes fade-in {
