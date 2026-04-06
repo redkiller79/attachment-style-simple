@@ -1,161 +1,58 @@
 import PaymentButton from '@/components/PaymentButton';
-import { PRICING } from '@/lib/pricing';
 
 export const metadata = {
   title: 'Pricing - Attachment Style Assessment',
-  description: 'Choose the perfect plan for your attachment style analysis and relationship insights.',
+  description: 'Unlock all 36 questions + complete attachment profile + PDF report for $9.99.',
 };
 
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
       <div className="max-w-7xl mx-auto px-4">
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Plan
+            Full Assessment Unlock
           </h1>
-
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Pick the level of insight that fits what you're looking for.
+            Unlock all 36 questions + complete attachment profile + PDF report.
           </p>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* Basic Plan */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-gray-200 hover:border-blue-200 transition-all">
-            <div className="p-8">
+        {/* Single Pricing Card */}
+        <div className="max-w-md mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-blue-500">
+            <div className="p-8 text-center">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {PRICING.BASIC.name}
+                Complete Report
               </h2>
-              <p className="text-gray-600 mb-6">
-                {PRICING.BASIC.description}
-              </p>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-gray-900">
-                  ${PRICING.BASIC.price}
-                </span>
-                <span className="text-gray-600"> USD</span>
+                <span className="text-5xl font-bold text-gray-900">$9.99</span>
+                <span className="text-gray-600 text-lg"> USD</span>
               </div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <ul className="space-y-3 mb-8 text-left">
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-600">Complete attachment style analysis</span>
+                  <span className="text-gray-700">All 36 questions</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-600">Personalized insights</span>
+                  <span className="text-gray-700">Complete attachment profile</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-600">PDF report download</span>
+                  <span className="text-gray-700">PDF report</span>
                 </li>
               </ul>
-              <PaymentButton 
-                planId="BASIC" 
-                className="w-full"
-              />
-            </div>
-          </div>
-
-          {/* Premium Plan */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-blue-500 relative">
-            <div className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {PRICING.PREMIUM.name}
-              </h2>
-              <p className="text-gray-600 mb-6">
-                {PRICING.PREMIUM.description}
-              </p>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-gray-900">
-                  ${PRICING.PREMIUM.price}
-                </span>
-                <span className="text-gray-600"> USD</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">Everything in Basic</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">Detailed relationship patterns</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">Personalized recommendations</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">Priority email support</span>
-                </li>
-              </ul>
-              <PaymentButton 
-                planId="PREMIUM" 
-                className="w-full"
-              />
-            </div>
-          </div>
-
-          {/* Complete Plan */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-gray-200 hover:border-blue-200 transition-all">
-            <div className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {PRICING.COMPLETE.name}
-              </h2>
-              <p className="text-gray-600 mb-6">
-                {PRICING.COMPLETE.description}
-              </p>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-gray-900">
-                  ${PRICING.COMPLETE.price}
-                </span>
-                <span className="text-gray-600"> USD</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">Everything in Premium</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">Complete 36-question assessment</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">Full attachment profile</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-600">PDF report</span>
-                </li>
-              </ul>
-              <PaymentButton 
-                planId="COMPLETE" 
+              <PaymentButton
+                planId="COMPLETE"
                 className="w-full"
               />
             </div>
@@ -170,29 +67,29 @@ export default function PricingPage() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-xl shadow-md p-6">
               <p className="text-gray-700 italic mb-3">
-                "I expected another generic personality quiz. Instead I got something that described
-                my marriage patterns so accurately I forwarded it to my therapist."
+                &quot;I expected another generic personality quiz. Instead I got something that described
+                my marriage patterns so accurately I forwarded it to my therapist.&quot;
               </p>
               <p className="text-gray-500 text-sm">— M, 41, Chicago</p>
             </div>
             <div className="bg-white rounded-xl shadow-md p-6">
               <p className="text-gray-700 italic mb-3">
-                "The premium report helped me understand why I always felt like I had to chase
-                my partner. That was worth every penny."
+                &quot;The premium report helped me understand why I always felt like I had to chase
+                my partner. That was worth every penny.&quot;
               </p>
               <p className="text-gray-500 text-sm">— R, 28, Portland</p>
             </div>
             <div className="bg-white rounded-xl shadow-md p-6">
               <p className="text-gray-700 italic mb-3">
-                "I was skeptical. But the language in the report — about how anxious attachment
-                shows up — was like reading a description of myself."
+                &quot;I was skeptical. But the language in the report — about how anxious attachment
+                shows up — was like reading a description of myself.&quot;
               </p>
               <p className="text-gray-500 text-sm">— K, 35, New York</p>
             </div>
             <div className="bg-white rounded-xl shadow-md p-6">
               <p className="text-gray-700 italic mb-3">
-                "Simple, direct, no nonsense. I took the test, paid, got my PDF.
-                Exactly what I needed."
+                &quot;Simple, direct, no nonsense. I took the test, paid, got my PDF.
+                Exactly what I needed.&quot;
               </p>
               <p className="text-gray-500 text-sm">— D, 30, Denver</p>
             </div>
@@ -210,7 +107,7 @@ export default function PricingPage() {
                 How does payment work?
               </h3>
               <p className="text-gray-600">
-                We use PayPal for secure payments. After completing the test, you'll be redirected
+                We use PayPal for secure payments. After completing the test, you&apos;ll be redirected
                 to PayPal to complete your purchase.
               </p>
             </div>
@@ -219,7 +116,7 @@ export default function PricingPage() {
                 Can I get a refund?
               </h3>
               <p className="text-gray-600">
-                Yes. If you're not satisfied with your report, email us within 30 days and we'll refund you.
+                Yes. If you&apos;re not satisfied with your report, email us within 30 days and we&apos;ll refund you.
                 No questions asked.
               </p>
             </div>
