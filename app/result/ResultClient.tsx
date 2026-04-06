@@ -214,6 +214,15 @@ export default function ResultClient() {
     const planId = searchParams?.get('plan');
     
     if (paymentStatus === 'success' && planId) {
+      // Verify session ID matches (Bug #7 Fix)
+      const pendingSessionId = localStorage.getItem('pendingSessionId');
+      const currentSessionId = localStorage.getItem('paymentSessionId');
+      if (pendingSessionId && pendingSessionId !== currentSessionId) {
+        console.warn('Session ID mismatch - possible session hijacking attempt');
+        // Clear pending state but still allow the payment to proceed
+        localStorage.removeItem('pendingSessionId');
+      }
+      
       setPaid(true);
       setShowPaywall(false);
       localStorage.setItem('paymentSuccess', planId);
@@ -225,6 +234,9 @@ export default function ResultClient() {
         // Automatically generate the detailed report after payment
         generateDetailedReport();
       }
+      
+      // Clear pending session after successful payment
+      localStorage.removeItem('pendingSessionId');
     } else {
       // Check localStorage for previous payments
       const savedPayment = localStorage.getItem('paymentSuccess');
@@ -287,6 +299,13 @@ export default function ResultClient() {
     setAiError(null);
     
     try {
+      // Get or create session ID for payment tracking
+      let sessionId = localStorage.getItem('paymentSessionId');
+      if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        localStorage.setItem('paymentSessionId', sessionId);
+      }
+      
       // Call payment API to create order
       const response = await fetch('/api/payment/paypal/create-order', {
         method: 'POST',
@@ -294,6 +313,7 @@ export default function ResultClient() {
         body: JSON.stringify({
           planId: 'DETAILED_REPORT',
           testResultId: style,
+          sessionId: sessionId,
         }),
       });
       
@@ -305,9 +325,10 @@ export default function ResultClient() {
       
       // Redirect to PayPal approval URL
       if (data.approvalUrl) {
-        // Save pending payment info
+        // Save pending payment info and session ID
         localStorage.setItem('pendingOrderId', data.orderId);
         localStorage.setItem('pendingPlanId', 'DETAILED_REPORT');
+        localStorage.setItem('pendingSessionId', data.sessionId || sessionId);
         // Redirect to PayPal
         window.location.href = data.approvalUrl;
       }

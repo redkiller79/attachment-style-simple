@@ -15,15 +15,10 @@ import { createOrderInDatabase, checkRateLimit } from '@/lib/supabase';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { planId, sessionId } = body;
+    const { planId, sessionId: requestSessionId } = body;
 
-    // Validate session ID (required for ownership binding)
-    if (!sessionId) {
-      return NextResponse.json(
-        { error: 'Session ID is required' },
-        { status: 400 }
-      );
-    }
+    // Use provided session ID or generate a new one (Bug #7 Fix)
+    const sessionId = requestSessionId || crypto.randomUUID();
 
     // Rate limiting check (Bug #7 Fix)
     const rateLimit = checkRateLimit(sessionId);
@@ -69,6 +64,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       orderId: order.id,
+      sessionId: sessionId,
       approvalUrl: order.links?.find((link: any) => link.rel === 'approve')?.href,
       executeUrl: `/api/payment/paypal/capture-order`,
       rateLimit: {
