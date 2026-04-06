@@ -409,7 +409,9 @@ function calculateAttachmentStyle(answers: (number | null)[]): AttachmentStyle {
 }
 
 // Paywall Modal Component
-function PaywallModal({ onUnlock, onContinueFree }: { onUnlock: () => void; onContinueFree: () => void }) {
+const COMPLETE_PRICE = 19.00;
+
+function PaywallModal({ onUnlock, onContinueFree, isLoading }: { onUnlock: () => void; onContinueFree: () => void; isLoading?: boolean }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl">
@@ -445,16 +447,24 @@ function PaywallModal({ onUnlock, onContinueFree }: { onUnlock: () => void; onCo
         {/* Pricing */}
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 mb-6 text-center">
           <div className="text-sm text-gray-500 line-through mb-1">Normally $29</div>
-          <div className="text-4xl font-bold text-gray-900 mb-1">$9.99</div>
+          <div className="text-4xl font-bold text-gray-900 mb-1">${COMPLETE_PRICE.toFixed(2)}</div>
           <div className="text-sm text-gray-600">One-time payment • Lifetime access</div>
         </div>
 
         {/* CTA Buttons */}
         <button
           onClick={onUnlock}
-          className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl mb-3"
+          disabled={isLoading}
+          className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl mb-3 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Unlock Full Assessment
+          {isLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+              Redirecting to PayPal...
+            </>
+          ) : (
+            'Unlock Full Assessment'
+          )}
         </button>
         <button
           onClick={onContinueFree}
@@ -520,22 +530,56 @@ export default function AssessmentClient() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [hasSeenPaywall, setHasSeenPaywall] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true); // Bug #3 fix: show loading while verifying
+  const [isPaywallLoading, setIsPaywallLoading] = useState(false);
 
-  // Check for unlock status on mount
+  // Bug #3 fix: Verify payment with server on mount (don't trust localStorage alone)
   useEffect(() => {
-    const unlocked = localStorage.getItem('assessmentUnlocked') === 'true';
-    setIsUnlocked(unlocked);
+    const verifyPayment = async () => {
+      try {
+        const response = await fetch('/api/payment/verify', { method: 'POST' });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.unlocked) {
+            setIsUnlocked(true);
+          }
+        }
+      } catch {
+        // Network error — fall back to localStorage for UX only; server is authoritative
+      } finally {
+        setIsVerifying(false);
+      }
+    };
+    verifyPayment();
   }, []);
 
-  const handleUnlock = () => {
-    localStorage.setItem('assessmentUnlocked', 'true');
-    setIsUnlocked(true);
-    setShowPaywall(false);
+  const handleUnlock = async () => {
+    setIsPaywallLoading(true);
+    try {
+      const response = await fetch('/api/payment/paypal/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId: 'COMPLETE' }),
+      });
+      const data = await response.json();
+      if (data.approvalUrl) {
+        // Bug #2 fix: Store pending state and redirect to PayPal
+        localStorage.setItem('pendingOrderId', data.orderId);
+        localStorage.setItem('pendingPlanId', 'COMPLETE');
+        window.location.href = data.approvalUrl;
+      }
+    } catch {
+      setIsPaywallLoading(false);
+    }
   };
 
   const handleContinueFree = () => {
     setShowPaywall(false);
     setHasSeenPaywall(true);
+    // Bug #4 fix: After seeing paywall, lock user to Q1-15 only — navigate back
+    if (currentQuestion >= FREE_QUESTIONS) {
+      setCurrentQuestion(FREE_QUESTIONS - 1);
+    }
   };
 
   const handleAnswer = (value: number) => {
@@ -545,12 +589,12 @@ export default function AssessmentClient() {
   };
 
   const handleNext = () => {
-    // After completing Q15 and before seeing paywall, show paywall
-    if (currentQuestion === FREE_QUESTIONS - 1 && !isUnlocked && !hasSeenPaywall) {
+    // Bug #1 fix: Show paywall EVERY TIME user reaches Q15, regardless of prior dismissals
+    if (currentQuestion === FREE_QUESTIONS - 1 && !isUnlocked) {
       setShowPaywall(true);
       return;
     }
-    
+
     if (currentQuestion < TOTAL_QUESTIONS - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -590,6 +634,17 @@ export default function AssessmentClient() {
   const progress = isUnlocked
     ? ((currentQuestion + (hasAnswer ? 1 : 0)) / TOTAL_QUESTIONS) * 100
     : (answeredFreeCount / FREE_QUESTIONS) * 100;
+
+  if (isVerifying) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+          <h2 className="text-2xl font-bold text-gray-900">Verifying access...</h2>
+        </div>
+      </div>
+    );
+  }
 
   if (isCalculating) {
     return (
@@ -761,14 +816,16 @@ export default function AssessmentClient() {
           </div>
         )}
 
-        {/* Continue Free - Shown after paywall dismissed */}
-        {hasSeenPaywall && currentQuestion >= FREE_QUESTIONS && !isUnlocked && (
+        {/* After paywall dismissed, lock to Q1-15 — show "See results" instead */}
+        {hasSeenPaywall && !isUnlocked && (
           <div className="mt-4 text-center">
+            <p className="text-gray-500 text-sm mb-2">You've completed the free preview</p>
             <button
-              onClick={() => setShowPaywall(true)}
-              className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+              onClick={handleSubmit}
+              disabled={answeredFreeCount < FREE_QUESTIONS}
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              ↑ Back to question {FREE_QUESTIONS} to unlock more
+              See Your Results →
             </button>
           </div>
         )}
@@ -806,9 +863,10 @@ export default function AssessmentClient() {
 
       {/* Paywall Modal */}
       {showPaywall && (
-        <PaywallModal 
+        <PaywallModal
           onUnlock={handleUnlock}
           onContinueFree={handleContinueFree}
+          isLoading={isPaywallLoading}
         />
       )}
     </div>

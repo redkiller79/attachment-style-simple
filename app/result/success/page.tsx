@@ -35,11 +35,8 @@ export default function PaymentSuccessPage() {
           // 清除 pending 状态
           localStorage.removeItem('pendingOrderId');
           localStorage.removeItem('pendingPlanId');
-          // 可以在这里解锁完整报告
-          const planId = localStorage.getItem('pendingPlanId');
-          if (planId) {
-            localStorage.setItem(`unlocked_${planId}`, 'true');
-          }
+          // Bug #2 fix: Set assessmentUnlocked so AssessmentClient grants Q16+ access
+          localStorage.setItem('assessmentUnlocked', 'true');
         } else {
           console.error('Payment capture failed:', data.error);
           setStatus('error');

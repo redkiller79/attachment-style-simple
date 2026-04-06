@@ -15,6 +15,173 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   }
 });
 
+// ============================================
+// ORDER MANAGEMENT (Bug #5 Fix)
+// ============================================
+
+export interface Order {
+  id: string;
+  session_id: string;
+  paypal_order_id: string;
+  plan_id: string;
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  amount: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Rate limiting: track order creation per session
+const orderCreationTracker = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_ORDERS = 5;
+
+export function checkRateLimit(sessionId: string): { allowed: boolean; remaining: number; resetIn: number } {
+  const now = Date.now();
+  const tracker = orderCreationTracker.get(sessionId);
+
+  if (!tracker || now > tracker.resetTime) {
+    orderCreationTracker.set(sessionId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, remaining: RATE_LIMIT_MAX_ORDERS - 1, resetIn: RATE_LIMIT_WINDOW_MS };
+  }
+
+  if (tracker.count >= RATE_LIMIT_MAX_ORDERS) {
+    return { allowed: false, remaining: 0, resetIn: tracker.resetTime - now };
+  }
+
+  tracker.count++;
+  return { allowed: true, remaining: RATE_LIMIT_MAX_ORDERS - tracker.count, resetIn: tracker.resetTime - now };
+}
+
+// Create a new pending order
+export async function createOrderInDatabase(
+  sessionId: string,
+  paypalOrderId: string,
+  planId: string,
+  amount: number
+): Promise<Order | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('orders')
+      .insert({
+        session_id: sessionId,
+        paypal_order_id: paypalOrderId,
+        plan_id: planId,
+        amount,
+        status: 'pending'
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating order in database:', error);
+      return null;
+    }
+
+    return data as Order;
+  } catch (error) {
+    console.error('Error creating order in database:', error);
+    return null;
+  }
+}
+
+// Update order status
+export async function updateOrderStatus(
+  paypalOrderId: string,
+  status: Order['status']
+): Promise<boolean> {
+  try {
+    const { error } = await supabaseAdmin
+      .from('orders')
+      .update({
+        status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('paypal_order_id', paypalOrderId);
+
+    if (error) {
+      console.error('Error updating order status:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    return false;
+  }
+}
+
+// Verify order ownership and get order details
+export async function verifyOrderOwnership(
+  paypalOrderId: string,
+  sessionId: string
+): Promise<Order | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('orders')
+      .select('*')
+      .eq('paypal_order_id', paypalOrderId)
+      .single();
+
+    if (error || !data) {
+      console.error('Order not found:', paypalOrderId);
+      return null;
+    }
+
+    // Verify session ownership
+    if (data.session_id !== sessionId) {
+      console.error('Session mismatch for order:', paypalOrderId);
+      return null;
+    }
+
+    return data as Order;
+  } catch (error) {
+    console.error('Error verifying order ownership:', error);
+    return null;
+  }
+}
+
+// Get order by session ID (for payment verification)
+export async function getOrderBySession(sessionId: string): Promise<Order | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('orders')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data as Order;
+  } catch (error) {
+    console.error('Error getting order by session:', error);
+    return null;
+  }
+}
+
+// Get order by PayPal order ID
+export async function getOrderByPaypalId(paypalOrderId: string): Promise<Order | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('orders')
+      .select('*')
+      .eq('paypal_order_id', paypalOrderId)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data as Order;
+  } catch (error) {
+    console.error('Error getting order by PayPal ID:', error);
+    return null;
+  }
+}
+
 // Types for our database tables
 export interface TestResult {
   id: string;
@@ -178,3 +345,5 @@ export async function savePayment(
     return null;
   }
 }
+
+
