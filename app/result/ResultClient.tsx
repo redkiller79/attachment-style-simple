@@ -113,7 +113,7 @@ const STYLE_INFO: Record<AttachmentStyle, StyleInfo> = {
     name: 'Dismissive',
     color: 'text-purple-600',
     bgColor: 'bg-purple-100 border-purple-200',
-    icon: 'üõ°Ô∏è',
+    icon: 'üõ°Ô∏?,
     description: 'You value independence and self-reliance. You may minimize the importance of relationships and feel uncomfortable with too much closeness.',
     characteristics: [
       'Values independence over intimacy',
@@ -174,7 +174,7 @@ const PRICING_PLANS = [
     features: [
       'Everything in Premium',
       '8-week improvement plan',
-      'AI coaching chatbot',
+      'BondType coaching chatbot',
       'Unlimited revisions',
     ],
     featured: false,
@@ -397,7 +397,8 @@ export default function ResultClient() {
         {/* AI Analysis Section - Always visible */}
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">ü§ñ AI-Powered Analysis</h2>
-          <p className="text-gray-600 mb-6">Get instant AI-generated insights about your attachment style.</p>
+          <p className="text-gray-600 mb-2">This report is generated using BondType's proprietary analysis engine, which combines established psychological frameworks with advanced computational methods to deliver personalized relationship insights.</p>
+          <p className="text-gray-600 mb-6">Get instant insights about your attachment style.</p>
 
           <div className="flex flex-wrap gap-4 mb-6">
             <button
@@ -407,7 +408,7 @@ export default function ResultClient() {
             >
               {aiSummaryLoading ? (
                 <>
-                  <span className="animate-spin">‚è≥</span> Generating...
+                  <span className="animate-spin">‚è?/span> Generating...
                 </>
               ) : (
                 <>
@@ -424,7 +425,7 @@ export default function ResultClient() {
               >
                 {aiDetailedLoading ? (
                   <>
-                    <span className="animate-spin">‚è≥</span> Generating...
+                    <span className="animate-spin">‚è?/span> Generating...
                   </>
                 ) : (
                   <>
@@ -458,7 +459,7 @@ export default function ResultClient() {
 
           {aiError && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
-              ‚ùå Error: {aiError}
+              ‚ù?Error: {aiError}
             </div>
           )}
 
@@ -470,7 +471,7 @@ export default function ResultClient() {
               <ul className="space-y-2">
                 {aiSummary.map((item, index) => (
                   <li key={index} className="flex items-start gap-2 text-blue-900">
-                    <span className="text-blue-500 mt-1">‚Ä¢</span>
+                    <span className="text-blue-500 mt-1">‚Ä?/span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -525,6 +526,9 @@ export default function ResultClient() {
                   </div>
                 )}
               </div>
+              <p className="text-gray-400 text-xs mt-4 pt-3 border-t border-purple-200">
+                BondType uses an AI-powered analysis system to generate personalized relationship reports, designed and validated by our research team.
+              </p>
             </div>
           )}
         </div>
@@ -551,7 +555,7 @@ export default function ResultClient() {
                 <ul className="space-y-2">
                   {styleInfo.strengths.map((strength, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <span className="text-green-500">‚úì</span>
+                      <span className="text-green-500">‚ú?/span>
                       <span className="text-gray-700">{strength}</span>
                     </li>
                   ))}
@@ -562,7 +566,7 @@ export default function ResultClient() {
                 <ul className="space-y-2">
                   {styleInfo.growthAreas.map((area, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <span className="text-orange-500">‚Üí</span>
+                      <span className="text-orange-500">‚Ü?/span>
                       <span className="text-gray-700">{area}</span>
                     </li>
                   ))}
@@ -621,7 +625,7 @@ export default function ResultClient() {
                   <ul className="space-y-2">
                     {styleInfo.strengths.map((strength, index) => (
                       <li key={index} className="flex items-start gap-3">
-                        <span className="text-green-500">‚úì</span>
+                        <span className="text-green-500">‚ú?/span>
                         <span className="text-gray-700">{strength}</span>
                       </li>
                     ))}
@@ -632,7 +636,7 @@ export default function ResultClient() {
                   <ul className="space-y-2">
                     {styleInfo.growthAreas.map((area, index) => (
                       <li key={index} className="flex items-start gap-3">
-                        <span className="text-orange-500">‚Üí</span>
+                        <span className="text-orange-500">‚Ü?/span>
                         <span className="text-gray-700">{area}</span>
                       </li>
                     ))}
@@ -651,12 +655,12 @@ export default function ResultClient() {
               <div className="max-w-md mx-auto">
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Unlock Detailed Report</h2>
-                  <p className="text-gray-600">Get in-depth AI analysis of your attachment style</p>
+                  <p className="text-gray-600">Get in-depth BondType analysis of your attachment style</p>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-purple-500">
                   <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-center py-3 text-sm font-semibold">
-                    üí° AI-Powered Detailed Analysis
+                    üí° BondType Detailed Analysis
                   </div>
                   <div className="p-6">
                     <div className="text-center mb-6">
@@ -804,7 +808,7 @@ export default function ResultClient() {
             href="/assessment"
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
-            ‚Üê Retake Assessment
+            ‚Ü?Retake Assessment
           </Link>
         </div>
       </div>
@@ -829,3 +833,5 @@ export default function ResultClient() {
     </div>
   );
 }
+
+

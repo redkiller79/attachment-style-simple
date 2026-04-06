@@ -28,6 +28,6 @@ export const PRICING = {
     name: 'Detailed Report',
     price: 6.99,
     currency: 'USD',
-    description: 'AI-powered detailed analysis with relationship patterns and recommendations',
+    description: 'Detailed analysis with relationship patterns and personalized recommendations, powered by BondType',
   },
 };

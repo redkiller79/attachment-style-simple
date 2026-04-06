@@ -257,7 +257,7 @@ export default function Home() {
                 {[
                   'Detailed attachment style analysis',
                   'Personalized relationship insights',
-                  'AI-powered in-depth summary',
+                  'In-depth summary powered by BondType',
                   'Actionable improvement strategies',
                   'Understanding of your emotional patterns',
                 ].map((item, i) => (
@@ -336,7 +336,7 @@ export default function Home() {
               <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center">
                 <SparklesIcon />
               </div>
-              <span className="text-sm font-semibold text-gray-900">AI-powered insights</span>
+              <span className="text-sm font-semibold text-gray-900">BondType-powered insights</span>
             </div>
           </div>
         </div>
