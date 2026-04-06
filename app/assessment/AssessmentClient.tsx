@@ -312,10 +312,10 @@ export default function AssessmentClient() {
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-8">
+        <div className="mb-4">
           <div className="flex justify-between text-sm text-gray-600 mb-2">
             <span>Question {currentQuestion + 1} of 20</span>
-            <span>{Math.round(progress)}% Complete</span>
+            <span>{answers.filter(a => a !== null).length}/20 answered</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
@@ -323,6 +323,25 @@ export default function AssessmentClient() {
               style={{ width: `${progress}%` }}
             ></div>
           </div>
+        </div>
+
+        {/* Question Navigator */}
+        <div className="mb-6 flex flex-wrap gap-2">
+          {QUESTIONS.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentQuestion(index)}
+              className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
+                currentQuestion === index
+                  ? 'bg-blue-600 text-white'
+                  : answers[index] !== null
+                  ? 'bg-green-100 text-green-700 border border-green-300'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
 
         {/* Question Card */}
@@ -377,12 +396,7 @@ export default function AssessmentClient() {
             {currentQuestion < 19 ? (
               <button
                 onClick={handleNext}
-                disabled={!hasAnswer}
-                className={`px-6 py-3 rounded-xl font-semibold transition-colors ${
-                  !hasAnswer
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                className="px-6 py-3 rounded-xl font-semibold transition-colors bg-blue-600 text-white hover:bg-blue-700"
               >
                 Next
               </button>
