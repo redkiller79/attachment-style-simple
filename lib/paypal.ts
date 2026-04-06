@@ -196,6 +196,13 @@ export const PRICING = {
     currency: 'USD',
     description: 'Full 36-question assessment with complete attachment profile and PDF report',
   },
+  DETAILED_REPORT: {
+    id: 'detailed_report',
+    name: 'Detailed Report',
+    price: 6.99,
+    currency: 'USD',
+    description: 'In-depth BondType analysis with detailed relationship patterns',
+  },
 };
 
 export default {
