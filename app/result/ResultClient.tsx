@@ -171,7 +171,7 @@ const PRICING_PLANS = [
     features: [
       'Everything in Premium',
       '8-week improvement plan',
-      'AI coaching chatbot',
+      'BondType coaching chatbot',
       'Unlimited revisions',
     ],
     featured: false,
@@ -378,8 +378,10 @@ export default function ResultClient() {
 
         {/* AI Analysis Section - Always visible */}
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">🤖 AI-Powered Analysis</h2>
-          <p className="text-gray-600 mb-6">Get instant AI-generated insights about your attachment style.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">🤖 BondType Analysis</h2>
+          <p className="text-gray-600 text-sm mb-4 italic">
+            This report is generated using BondType's proprietary analysis engine, which combines established psychological frameworks with advanced computational methods to deliver personalized relationship insights.
+          </p>
 
           <div className="flex flex-wrap gap-4 mb-6">
             <button
@@ -393,7 +395,7 @@ export default function ResultClient() {
                 </>
               ) : (
                 <>
-                  <span>📝</span> Generate AI Summary (DeepSeek)
+                  <span>📝</span> Generate BondType Summary
                 </>
               )}
             </button>
@@ -409,7 +411,7 @@ export default function ResultClient() {
                 </>
               ) : (
                 <>
-                  <span>📄</span> Generate Detailed Report (Kimi)
+                  <span>📄</span> Generate BondType Detailed Report
                 </>
               )}
             </button>
@@ -424,7 +426,7 @@ export default function ResultClient() {
           {aiSummary && (
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-4">
               <h3 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
-                <span>📝</span> AI Summary (DeepSeek)
+                <span>📝</span> BondType Summary
               </h3>
               <ul className="space-y-2">
                 {aiSummary.map((item, index) => (
@@ -440,7 +442,7 @@ export default function ResultClient() {
           {aiDetailedReport && (
             <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
               <h3 className="text-lg font-bold text-purple-800 mb-3 flex items-center gap-2">
-                <span>📄</span> Detailed Report (Kimi AI)
+                <span>📄</span> BondType Detailed Report
               </h3>
               <div className="space-y-4 text-purple-900">
                 {aiDetailedReport.overview && (
@@ -484,6 +486,9 @@ export default function ResultClient() {
                   </div>
                 )}
               </div>
+              <p className="text-gray-400 text-xs mt-6 pt-4 border-t border-purple-200">
+                BondType uses an AI-powered analysis system to generate personalized relationship reports, designed and validated by our research team.
+              </p>
             </div>
           )}
         </div>
