@@ -137,6 +137,9 @@ const STYLE_INFO: Record<AttachmentStyle, StyleInfo> = {
   },
 };
 
+const DETAILED_REPORT_PRICE = 6.99;
+const DETAILED_REPORT_PLAN_ID = 'DETAILED_REPORT';
+
 const PRICING_PLANS = [
   {
     planId: 'BASIC' as const,
@@ -188,6 +191,8 @@ export default function ResultClient() {
   const [aiDetailedReport, setAiDetailedReport] = useState<AIResult['report'] | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
   const [paid, setPaid] = useState(false);
+  const [detailedReportPaid, setDetailedReportPaid] = useState(false);
+  const [paywallPurpose, setPaywallPurpose] = useState<'fullReport' | 'detailedReport'>('fullReport');
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [pdfFilename, setPdfFilename] = useState<string | null>(null);
@@ -211,7 +216,12 @@ export default function ResultClient() {
     const planId = searchParams?.get('plan');
     
     if (paymentStatus === 'success' && planId) {
-      setPaid(true);
+      if (planId === DETAILED_REPORT_PLAN_ID) {
+        setDetailedReportPaid(true);
+        localStorage.setItem('detailedReportPaid', 'true');
+      } else {
+        setPaid(true);
+      }
       setShowPaywall(false);
       localStorage.setItem('paymentSuccess', planId);
     } else {
@@ -219,6 +229,10 @@ export default function ResultClient() {
       const savedPayment = localStorage.getItem('paymentSuccess');
       if (savedPayment) {
         setPaid(true);
+      }
+      const savedDetailedPayment = localStorage.getItem('detailedReportPaid');
+      if (savedDetailedPayment === 'true') {
+        setDetailedReportPaid(true);
       }
     }
     
@@ -312,8 +326,12 @@ export default function ResultClient() {
     }
   };
 
-  const handlePaymentSuccess = () => {
-    setPaid(true);
+  const handlePaymentSuccess = (planId?: string) => {
+    if (planId === DETAILED_REPORT_PLAN_ID) {
+      setDetailedReportPaid(true);
+    } else {
+      setPaid(true);
+    }
     setShowPaywall(false);
   };
 
@@ -393,27 +411,50 @@ export default function ResultClient() {
                 </>
               ) : (
                 <>
-                  <span>📝</span> Generate AI Summary (DeepSeek)
+                  <span>📝</span> Generate Summary
                 </>
               )}
             </button>
 
-            <button
-              onClick={generateDetailedReport}
-              disabled={aiDetailedLoading}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {aiDetailedLoading ? (
-                <>
-                  <span className="animate-spin">⏳</span> Generating...
-                </>
-              ) : (
-                <>
-                  <span>📄</span> Generate Detailed Report (Kimi)
-                </>
-              )}
-            </button>
+            {detailedReportPaid ? (
+              <button
+                onClick={generateDetailedReport}
+                disabled={aiDetailedLoading}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {aiDetailedLoading ? (
+                  <>
+                    <span className="animate-spin">⏳</span> Generating...
+                  </>
+                ) : (
+                  <>
+                    <span>📄</span> Generate Detailed Report
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={() => { setShowPaywall(true); setPaywallPurpose('detailedReport'); }}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all flex items-center gap-2"
+              >
+                <span>🔒</span> Unlock Detailed Report - ${DETAILED_REPORT_PRICE.toFixed(2)}
+              </button>
+            )}
           </div>
+
+          {!detailedReportPaid && (
+            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-4">
+              <p className="text-purple-800 text-sm">
+                <span className="font-semibold">💡 Want more?</span> The detailed report includes relationship patterns, communication insights, common challenges, personalized recommendations, and compatible dynamics. {` `}
+                <button
+                  onClick={() => { setShowPaywall(true); setPaywallPurpose('detailedReport'); }}
+                  className="text-purple-600 underline font-medium hover:text-purple-700"
+                >
+                  Unlock for ${DETAILED_REPORT_PRICE.toFixed(2)}
+                </button>
+              </p>
+            </div>
+          )}
 
           {aiError && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
@@ -424,7 +465,7 @@ export default function ResultClient() {
           {aiSummary && (
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-4">
               <h3 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
-                <span>📝</span> AI Summary (DeepSeek)
+                <span>📝</span> AI Summary
               </h3>
               <ul className="space-y-2">
                 {aiSummary.map((item, index) => (
@@ -440,7 +481,7 @@ export default function ResultClient() {
           {aiDetailedReport && (
             <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
               <h3 className="text-lg font-bold text-purple-800 mb-3 flex items-center gap-2">
-                <span>📄</span> Detailed Report (Kimi AI)
+                <span>📄</span> Detailed Report
               </h3>
               <div className="space-y-4 text-purple-900">
                 {aiDetailedReport.overview && (
@@ -605,51 +646,129 @@ export default function ResultClient() {
         {/* Pricing Section */}
         {showPaywall && !paid && (
           <div className="animate-fade-in">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Report Plan</h2>
-              <p className="text-gray-600">Unlock your complete attachment style analysis</p>
-            </div>
+            {paywallPurpose === 'detailedReport' ? (
+              /* Detailed Report Single Plan */
+              <div className="max-w-md mx-auto">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Unlock Detailed Report</h2>
+                  <p className="text-gray-600">Get in-depth AI analysis of your attachment style</p>
+                </div>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {PRICING_PLANS.map((plan) => (
-                <div
-                  key={plan.planId}
-                  className={`bg-white rounded-2xl shadow-lg overflow-hidden ${
-                    plan.featured ? 'border-2 border-blue-500 relative transform md:scale-105' : 'border border-gray-200'
-                  }`}
-                >
-                  {plan.featured && (
-                    <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
-                      Most Popular
-                    </div>
-                  )}
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-purple-500">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-center py-3 text-sm font-semibold">
+                    💡 AI-Powered Detailed Analysis
+                  </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
+                    <div className="text-center mb-6">
+                      <span className="text-5xl font-bold text-gray-900">${DETAILED_REPORT_PRICE.toFixed(2)}</span>
                       <span className="text-gray-600"> USD</span>
                     </div>
                     <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="text-gray-600 text-sm">{feature}</span>
-                        </li>
-                      ))}
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-600 text-sm">Comprehensive overview of your attachment pattern</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-600 text-sm">Deep dive into relationship patterns</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-600 text-sm">Communication style analysis</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-600 text-sm">Common challenges identification</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-600 text-sm">Personalized recommendations</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-gray-600 text-sm">Compatible relationship dynamics</span>
+                      </li>
                     </ul>
                     <PaymentButton
-                      planId={plan.planId}
+                      planId={DETAILED_REPORT_PLAN_ID}
                       testResultId={style}
-                      onSuccess={handlePaymentSuccess}
+                      onSuccess={() => handlePaymentSuccess(DETAILED_REPORT_PLAN_ID)}
                       className="w-full"
                     />
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="text-center mt-6">
+                  <button
+                    onClick={() => setShowPaywall(false)}
+                    className="text-gray-500 hover:text-gray-700 text-sm"
+                  >
+                    Maybe later
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Full Report Plans */
+              <>
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Report Plan</h2>
+                  <p className="text-gray-600">Unlock your complete attachment style analysis</p>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6 mb-8">
+                  {PRICING_PLANS.map((plan) => (
+                    <div
+                      key={plan.planId}
+                      className={`bg-white rounded-2xl shadow-lg overflow-hidden ${
+                        plan.featured ? 'border-2 border-blue-500 relative transform md:scale-105' : 'border border-gray-200'
+                      }`}
+                    >
+                      {plan.featured && (
+                        <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
+                          Most Popular
+                        </div>
+                      )}
+                      <div className="p-6">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                        <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
+                        <div className="mb-6">
+                          <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
+                          <span className="text-gray-600"> USD</span>
+                        </div>
+                        <ul className="space-y-3 mb-6">
+                          {plan.features.map((feature, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-gray-600 text-sm">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <PaymentButton
+                          planId={plan.planId}
+                          testResultId={style}
+                          onSuccess={handlePaymentSuccess}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
 
             {/* Trust badges */}
             <div className="flex justify-center items-center gap-8 text-gray-500 text-sm">

@@ -424,12 +424,12 @@ function PaywallModal({ onUnlock, onContinueFree, isLoading }: { onUnlock: () =>
           Unlock the Full Assessment
         </h2>
         <p className="text-gray-600 text-center mb-6">
-          You've completed the free preview. Get your complete attachment profile with all 36 questions.
+          You've completed the free preview. Get your complete attachment profile.
         </p>
 
         <div className="space-y-3 mb-8">
           {[
-            { icon: '🎯', text: 'Complete 36-question assessment' },
+            { icon: '🎯', text: 'Unlock remaining 21 questions' },
             { icon: '📊', text: 'Detailed scoring algorithm' },
             { icon: '💡', text: 'Personalized insights & recommendations' },
             { icon: '📱', text: 'Mobile-friendly report you can save' },
