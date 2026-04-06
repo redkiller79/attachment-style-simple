@@ -192,9 +192,9 @@ export const PRICING = {
   COMPLETE: {
     id: 'complete_report',
     name: 'Complete Report',
-    price: 19.00,
+    price: 9.99,
     currency: 'USD',
-    description: 'Full analysis with 8-week improvement plan and AI coaching',
+    description: 'Full 36-question assessment with complete attachment profile and PDF report',
   },
 };
 

@@ -409,7 +409,7 @@ function calculateAttachmentStyle(answers: (number | null)[]): AttachmentStyle {
 }
 
 // Paywall Modal Component
-const COMPLETE_PRICE = 19.00;
+const COMPLETE_PRICE = 9.99;
 
 function PaywallModal({ onUnlock, onContinueFree, isLoading }: { onUnlock: () => void; onContinueFree: () => void; isLoading?: boolean }) {
   return (
@@ -448,7 +448,7 @@ function PaywallModal({ onUnlock, onContinueFree, isLoading }: { onUnlock: () =>
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 mb-6 text-center">
           <div className="text-sm text-gray-500 line-through mb-1">Normally $29</div>
           <div className="text-4xl font-bold text-gray-900 mb-1">${COMPLETE_PRICE.toFixed(2)}</div>
-          <div className="text-sm text-gray-600">One-time payment â€¢ Lifetime access</div>
+          <div className="text-sm text-gray-600">One-time payment â€?Lifetime access</div>
         </div>
 
         {/* CTA Buttons */}
@@ -515,8 +515,7 @@ function TeaserPreview({ question, onUnlock }: { question: typeof QUESTIONS[0]; 
         onClick={onUnlock}
         className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
       >
-        Unlock to answer â†’
-      </button>
+        Unlock to answer â†?      </button>
     </div>
   );
 }
@@ -545,7 +544,7 @@ export default function AssessmentClient() {
           }
         }
       } catch {
-        // Network error â€” fall back to localStorage for UX only; server is authoritative
+        // Network error â€?fall back to localStorage for UX only; server is authoritative
       } finally {
         setIsVerifying(false);
       }
@@ -576,7 +575,7 @@ export default function AssessmentClient() {
   const handleContinueFree = () => {
     setShowPaywall(false);
     setHasSeenPaywall(true);
-    // Bug #4 fix: After seeing paywall, lock user to Q1-15 only â€” navigate back
+    // Bug #4 fix: After seeing paywall, lock user to Q1-15 only â€?navigate back
     if (currentQuestion >= FREE_QUESTIONS) {
       setCurrentQuestion(FREE_QUESTIONS - 1);
     }
@@ -680,7 +679,7 @@ export default function AssessmentClient() {
               ) : (
                 <span className="flex items-center gap-2">
                   <span className="text-blue-600 font-medium">{answeredFreeCount} of {FREE_QUESTIONS} free</span>
-                  <span className="text-gray-400">â€¢</span>
+                  <span className="text-gray-400">â€?/span>
                   <span className="text-purple-600 font-medium">{lockedCount} locked</span>
                 </span>
               )}
@@ -735,7 +734,7 @@ export default function AssessmentClient() {
               )}
               {isUnlocked && isPremiumQuestion && (
                 <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                  âœ“ Unlocked
+                  âœ?Unlocked
                 </span>
               )}
             </div>
@@ -809,14 +808,13 @@ export default function AssessmentClient() {
                       : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
                   }`}
                 >
-                  See My Results â†’
-                </button>
+                  See My Results â†?                </button>
               )}
             </div>
           </div>
         )}
 
-        {/* After paywall dismissed, lock to Q1-15 â€” show "See results" instead */}
+        {/* After paywall dismissed, lock to Q1-15 â€?show "See results" instead */}
         {hasSeenPaywall && !isUnlocked && (
           <div className="mt-4 text-center">
             <p className="text-gray-500 text-sm mb-2">You've completed the free preview</p>
@@ -825,8 +823,7 @@ export default function AssessmentClient() {
               disabled={answeredFreeCount < FREE_QUESTIONS}
               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              See Your Results â†’
-            </button>
+              See Your Results â†?            </button>
           </div>
         )}
 
