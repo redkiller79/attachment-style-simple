@@ -748,13 +748,14 @@ export default function AssessmentClient() {
         </div>
 
         <div className="mb-8">
-          <div className="flex justify-between text-sm text-[#8a8f98] mb-2">
+          {/* Progress Header */}
+          <div className="flex justify-between items-center text-sm text-[#8a8f98] mb-2">
             <span>
               {isUnlocked ? (
                 <>Question {currentQuestion + 1} of {TOTAL_QUESTIONS}</>
               ) : (
                 <span className="flex items-center gap-2">
-                  <span className="text-[#7170ff] font-medium">{answeredFreeCount} of {FREE_QUESTIONS} free</span>
+                  <span className="text-[#7170ff] font-medium">Question {currentQuestion + 1} of {FREE_QUESTIONS}</span>
                   <span className="text-[rgba(255,255,255,0.2)]">/</span>
                   <span className="text-[#5e6ad2] font-medium">{lockedCount} locked</span>
                 </span>
@@ -763,7 +764,8 @@ export default function AssessmentClient() {
             <span>{Math.round(progress)}% Complete</span>
           </div>
           
-          <div className="w-full bg-[#191a1b] rounded-full h-2 overflow-hidden">
+          {/* Progress Bar */}
+          <div className="w-full bg-[#191a1b] rounded-full h-2 overflow-hidden mb-3">
             <div
               className={`h-2 rounded-full transition-all duration-300 ${
                 isUnlocked 
@@ -776,6 +778,35 @@ export default function AssessmentClient() {
             ></div>
           </div>
 
+          {/* Progress Encouragement Text */}
+          <div className="text-center mb-4">
+            {!isUnlocked && (
+              <>
+                {answeredFreeCount < FREE_QUESTIONS - 3 && answeredFreeCount > 0 && (
+                  <p className="text-[#d0d6e0] text-sm font-medium">
+                    You're making great progress! {FREE_QUESTIONS - answeredFreeCount} questions left to get your free results.
+                  </p>
+                )}
+                {answeredFreeCount >= FREE_QUESTIONS - 3 && answeredFreeCount < FREE_QUESTIONS && (
+                  <p className="text-[#7170ff] text-sm font-medium">
+                    You're almost there! {FREE_QUESTIONS - answeredFreeCount} more questions to get your personalized results.
+                  </p>
+                )}
+                {answeredFreeCount === 0 && (
+                  <p className="text-[#d0d6e0] text-sm font-medium">
+                    Get your personalized results after this quick test. Just {FREE_QUESTIONS} questions to go!
+                  </p>
+                )}
+              </>
+            )}
+            {isUnlocked && (
+              <p className="text-[#d0d6e0] text-sm font-medium">
+                Complete all {TOTAL_QUESTIONS} questions for your comprehensive attachment profile.
+              </p>
+            )}
+          </div>
+
+          {/* Premium Lock Indicator */}
           {!isUnlocked && (
             <div className="mt-2 text-center">
               <span className="inline-flex items-center gap-1 text-xs text-[#8a8f98] bg-[#191a1b] px-3 py-1 rounded-full border border-[rgba(255,255,255,0.08)]">

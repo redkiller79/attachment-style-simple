@@ -747,16 +747,43 @@ export default function ResultClient() {
               ))}
             </div>
 
-            {/* Trust badges */}
-            <div className="flex justify-center items-center gap-8 text-gray-500 text-sm">
-              <div className="flex items-center gap-2">
-                <span>🔒</span> Secure Payment
+            {/* Enhanced Trust & Security Section */}
+            <div className="mt-8 p-6 bg-[rgba(94,106,210,0.08)] rounded-xl border border-[rgba(94,106,210,0.15)]">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
+                {/* Security Badges */}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 bg-[rgba(94,106,210,0.15)] px-3 py-1.5 rounded-full">
+                    <span className="text-[#5e6ad2]">🔒</span>
+                    <span className="text-sm font-medium text-[#f7f8f8]">Secure Checkout</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-[#8a8f98]">
+                    <svg className="w-4 h-4 text-[#5e6ad2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span>SSL Protected</span>
+                  </div>
+                </div>
+                
+                {/* Money Back Guarantee */}
+                <div className="flex items-center gap-3 bg-[rgba(45,212,191,0.1)] px-4 py-2 rounded-lg border border-[rgba(45,212,191,0.2)]">
+                  <span className="text-2xl">🛡️</span>
+                  <div>
+                    <p className="text-sm font-semibold text-[#2DD4BF]">30-Day Money-Back Guarantee</p>
+                    <p className="text-xs text-[#8a8f98]">Not satisfied? Full refund within 30 days</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span>💳</span> PayPal
-              </div>
-              <div className="flex items-center gap-2">
-                <span>↩️</span> 30-Day Refund
+              
+              {/* Payment Methods */}
+              <div className="flex justify-center items-center gap-6 mt-6 pt-6 border-t border-[rgba(255,255,255,0.06)]">
+                <div className="flex items-center gap-2 text-[#8a8f98] text-sm">
+                  <span>💳</span>
+                  <span>PayPal</span>
+                </div>
+                <div className="flex items-center gap-2 text-[#8a8f98] text-sm">
+                  <span>🔐</span>
+                  <span>Encrypted Transaction</span>
+                </div>
               </div>
             </div>
           </div>
@@ -772,8 +799,61 @@ export default function ResultClient() {
             >
               View Pricing Plans
             </button>
+            
+            {/* Inline Trust Badges for Collapsed State */}
+            <div className="flex justify-center items-center gap-6 mt-6 text-xs text-[#8a8f98]">
+              <div className="flex items-center gap-1.5">
+                <span>🔒</span> Secure Checkout
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span>🛡️</span> 30-Day Refund
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span>🔐</span> SSL Protected
+              </div>
+            </div>
           </div>
         )}
+
+        {/* User Testimonials Section */}
+        <div className="mt-16 pt-12 border-t border-[rgba(255,255,255,0.06)]">
+          <h3 className="text-xl font-medium text-[#f7f8f8] text-center mb-8">What Our Users Say</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <div className="flex items-center gap-1 mb-3">
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+              </div>
+              <p className="text-[#d0d6e0] text-sm mb-4">"This report completely changed how I understand my relationships. The detailed insights were worth every penny."</p>
+              <p className="text-[#8a8f98] text-sm font-medium">Sarah M., New York</p>
+            </div>
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <div className="flex items-center gap-1 mb-3">
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+              </div>
+              <p className="text-[#d0d6e0] text-sm mb-4">"The AI-powered analysis was surprisingly accurate. I've shared this with my therapist and we're using it to guide our sessions."</p>
+              <p className="text-[#8a8f98] text-sm font-medium">James K., Los Angeles</p>
+            </div>
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <div className="flex items-center gap-1 mb-3">
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+                <span className="text-[#fbbf24]">⭐</span>
+              </div>
+              <p className="text-[#d0d6e0] text-sm mb-4">"Finally understood why I keep repeating the same patterns. The growth areas section gave me a clear path forward."</p>
+              <p className="text-[#8a8f98] text-sm font-medium">Emily R., Chicago</p>
+            </div>
+          </div>
+        </div>
 
         {/* Retake Test */}
         <div className="text-center mt-12">

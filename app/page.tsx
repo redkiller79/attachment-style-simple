@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import SubscribeForm from '@/components/SubscribeForm';
+import TestimonialAvatars from '@/components/TestimonialAvatars';
+import TrustBadges from '@/components/TrustBadges';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -95,9 +97,12 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/assessment"
-                className="group inline-flex items-center justify-center gap-2 bg-[#5e6ad2] text-white font-medium text-base px-8 py-3.5 rounded-md hover:bg-[#828fff] transition-colors"
+                className="group inline-flex items-center justify-center gap-2 bg-[#5e6ad2] text-white font-medium text-base px-8 py-3.5 rounded-md hover:bg-[#828fff] transition-colors relative"
               >
-                Start Free Assessment
+                <span className="relative">
+                  Take Free 15-Question Test
+                  <span className="absolute -top-2 -right-6 bg-[#7170ff] text-white text-xs font-bold px-2 py-0.5 rounded-full">FREE</span>
+                </span>
                 <ArrowRightIcon />
               </Link>
               <Link
