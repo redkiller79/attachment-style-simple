@@ -5,6 +5,7 @@ export const logoColors = {
   pink: '#EC4899',
   slate: '#1E1B4B',
   offWhite: '#F8F7FF',
+  stellarWhite: '#F8FAFC',
 } as const;
 
 export const gradients = {

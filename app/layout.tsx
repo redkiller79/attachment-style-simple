@@ -23,8 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className="h-full antialiased dark">
       <head>
+        {/* Google Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
         {/* Google Analytics */}
         <script
           async
@@ -63,7 +70,7 @@ export default function RootLayout({
           })}
         </script>
       </head>
-      <body className="min-h-full flex flex-col bg-white">
+      <body className="min-h-full flex flex-col bg-[#0a0a0f]">
         <Navigation />
         <main className="flex-1">{children}</main>
         <Footer />

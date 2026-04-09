@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: colors.secondary,
     marginTop: 5,
-    marginRight: 10,
+    marginRight: 8,
   },
   bulletText: {
     flex: 1,
@@ -366,7 +366,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
           </Text>
           <View style={styles.styleBadge}>
             <Text style={styles.styleBadgeText}>
-              [Secure] {data.style}
+              SECURE ATTACHMENT STYLE
             </Text>
           </View>
         </View>
@@ -431,7 +431,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
                 </View>
                 {data.growthAreas.map((item, i) => (
                   <View key={i} style={styles.arrowItem}>
-                    <Text style={styles.arrowIcon}>→</Text>
+                    <Text style={styles.arrowIcon}>-</Text>
                     <Text style={styles.arrowText}>{item}</Text>
                   </View>
                 ))}
@@ -503,7 +503,7 @@ export function ReportDocument({ data }: ReportDocumentProps) {
         <View style={styles.footer}>
           <View style={styles.footerRow}>
             <Text style={styles.footerText}>
-              BondType © 2024 | Science-backed attachment theory assessment
+              BondType (c) 2024 | Science-backed attachment theory assessment
             </Text>
             <View style={styles.footerBadge}>
               <Text style={styles.footerBadgeText}>CONFIDENTIAL</Text>

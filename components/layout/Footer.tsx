@@ -17,20 +17,20 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-[#0a0a0f] text-[#F8FAFC]">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-[#2DD4BF] to-[#5B4B8A] rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xl">B</span>
               </div>
               <span className="text-2xl font-bold text-white">
                 BondType
               </span>
             </div>
-            <p className="text-gray-400 mb-6 max-w-md">
+            <p className="text-[#F8FAFC]/70 mb-6 max-w-md">
               Scientifically-validated attachment style assessment and research-based insights 
               to help you build healthier relationships.
             </p>
@@ -45,7 +45,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-[#F8FAFC]/70 hover:text-[#F8FAFC] transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -57,16 +57,16 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="mt-12 pt-8 border-t border-gray-800">
+        <div className="mt-12 pt-8 border-t border-[#5B4B8A]/30">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm">
+            <div className="text-[#F8FAFC]/70 text-sm">
               © {new Date().getFullYear()} BondType. All rights reserved.
             </div>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-gray-400 hover:text-white text-sm">
+              <Link href="/privacy" className="text-[#F8FAFC]/70 hover:text-[#F8FAFC] text-sm">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white text-sm">
+              <Link href="/terms" className="text-[#F8FAFC]/70 hover:text-[#F8FAFC] text-sm">
                 Terms of Service
               </Link>
             </div>

@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+      <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#2DD4BF] border-t-transparent"></div>
     </div>
   );
 }

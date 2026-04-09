@@ -57,6 +57,58 @@ CREATE TABLE IF NOT EXISTS payments (
 CREATE INDEX IF NOT EXISTS idx_payments_paypal_order_id ON payments(paypal_order_id);
 CREATE INDEX IF NOT EXISTS idx_payments_test_result_id ON payments(test_result_id);
 
+-- Create quiz_responses table to track individual question answers
+CREATE TABLE IF NOT EXISTS quiz_responses (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  session_id TEXT NOT NULL,
+  question_id INTEGER NOT NULL,
+  answer INTEGER NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_quiz_responses_session_id ON quiz_responses(session_id);
+CREATE INDEX IF NOT EXISTS idx_quiz_responses_question_id ON quiz_responses(question_id);
+CREATE INDEX IF NOT EXISTS idx_quiz_responses_created_at ON quiz_responses(created_at DESC);
+
+-- Create users table for email collection (optional)
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email TEXT UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+-- Create reports table for premium content
+CREATE TABLE IF NOT EXISTS reports (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  session_id TEXT NOT NULL,
+  attachment_type TEXT NOT NULL,
+  scores JSONB NOT NULL DEFAULT '{"secure": 0, "anxious": 0, "avoidant": 0, "disorganized": 0}',
+  premium_unlocked BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reports_session_id ON reports(session_id);
+CREATE INDEX IF NOT EXISTS idx_reports_attachment_type ON reports(attachment_type);
+
+-- Create orders table (already referenced in lib/supabase.ts)
+CREATE TABLE IF NOT EXISTS orders (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  session_id TEXT NOT NULL,
+  paypal_order_id TEXT UNIQUE NOT NULL,
+  plan_id TEXT NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_orders_session_id ON orders(session_id);
+CREATE INDEX IF NOT EXISTS idx_orders_paypal_order_id ON orders(paypal_order_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+
 -- Create feedback table
 CREATE TABLE IF NOT EXISTS feedback (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -109,6 +161,37 @@ CREATE POLICY "Allow public read access to feedback" ON feedback
 CREATE POLICY "Allow public insert access to feedback" ON feedback
   FOR INSERT WITH CHECK (true);
 
+-- RLS Policies for quiz_responses
+CREATE POLICY "Allow public read access to quiz_responses" ON quiz_responses
+  FOR SELECT USING (true);
+
+CREATE POLICY "Allow public insert access to quiz_responses" ON quiz_responses
+  FOR INSERT WITH CHECK (true);
+
+-- RLS Policies for users
+CREATE POLICY "Allow public read access to users" ON users
+  FOR SELECT USING (true);
+
+CREATE POLICY "Allow public insert access to users" ON users
+  FOR INSERT WITH CHECK (true);
+
+-- RLS Policies for reports
+CREATE POLICY "Allow public read access to reports" ON reports
+  FOR SELECT USING (true);
+
+CREATE POLICY "Allow public insert access to reports" ON reports
+  FOR INSERT WITH CHECK (true);
+
+-- RLS Policies for orders
+CREATE POLICY "Allow public read access to orders" ON orders
+  FOR SELECT USING (true);
+
+CREATE POLICY "Allow public insert access to orders" ON orders
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Allow public update access to orders" ON orders
+  FOR UPDATE USING (true);
+
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -131,6 +214,11 @@ CREATE TRIGGER update_payments_updated_at
 
 CREATE TRIGGER update_user_sessions_last_active
   BEFORE UPDATE ON user_sessions
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_orders_updated_at
+  BEFORE UPDATE ON orders
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 

@@ -38,14 +38,14 @@ export default function SubscribeForm() {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md mx-auto">
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">Stay Updated</h3>
-      <p className="text-gray-600 mb-6">
+    <div className="bg-[#0D1B2A] rounded-2xl p-8 shadow-lg max-w-md mx-auto border border-[#5B4B8A]/30">
+      <h3 className="text-2xl font-bold text-[#F8FAFC] mb-2">Stay Updated</h3>
+      <p className="text-[#F8FAFC]/70 mb-6">
         Get the latest insights on attachment styles and relationship psychology.
       </p>
 
       {status === 'success' ? (
-        <div className="text-green-600 bg-green-50 rounded-xl p-4 text-center font-medium">
+        <div className="text-[#2DD4BF] bg-[#2DD4BF]/10 rounded-xl p-4 text-center font-medium">
           ✓ {message}
         </div>
       ) : (
@@ -62,25 +62,25 @@ export default function SubscribeForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={status === 'loading'}
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all disabled:opacity-60"
+              className="w-full px-4 py-3 rounded-xl border border-[#5B4B8A]/30 bg-[#0a0a0f] text-[#F8FAFC] focus:border-[#2DD4BF] focus:ring-2 focus:ring-[#2DD4BF]/20 outline-none transition-all disabled:opacity-60"
             />
           </div>
 
           {status === 'error' && (
-            <p className="text-red-600 text-sm bg-red-50 rounded-lg px-3 py-2">{message}</p>
+            <p className="text-red-400 text-sm bg-red-400/10 rounded-lg px-3 py-2">{message}</p>
           )}
 
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full bg-[#2DD4BF] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#2DD4BF]/80 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
           </button>
         </form>
       )}
 
-      <p className="text-gray-400 text-xs mt-4 text-center">
+      <p className="text-[#F8FAFC]/50 text-xs mt-4 text-center">
         No spam, ever. Unsubscribe anytime.
       </p>
     </div>

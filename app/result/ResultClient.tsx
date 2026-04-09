@@ -141,7 +141,7 @@ const PRICING_PLANS = [
   {
     planId: 'BASIC' as const,
     name: 'Basic Report',
-    price: 12,
+    price: 14.99,
     description: 'Your attachment style analysis',
     features: [
       'Complete attachment style analysis',
@@ -151,30 +151,18 @@ const PRICING_PLANS = [
     featured: false,
   },
   {
-    planId: 'PREMIUM' as const,
-    name: 'Premium Report',
-    price: 15,
-    description: 'Detailed analysis with recommendations',
+    planId: 'COMPLETE' as const,
+    name: 'Complete Report + AI',
+    price: 24.99,
+    originalPrice: 49.99,
+    description: 'Full analysis with AI-powered insights',
     features: [
       'Everything in Basic',
       'Detailed relationship patterns',
-      'Personalized recommendations',
-      'Priority email support',
+      'AI-powered BondType analysis',
+      'BondType coaching chatbot',
     ],
     featured: true,
-  },
-  {
-    planId: 'COMPLETE' as const,
-    name: 'Complete Report',
-    price: 19,
-    description: 'Full analysis with improvement plan',
-    features: [
-      'Everything in Premium',
-      '8-week improvement plan',
-      'BondType coaching chatbot',
-      'Unlimited revisions',
-    ],
-    featured: false,
   },
 ];
 
@@ -192,66 +180,93 @@ export default function ResultClient() {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [pdfFilename, setPdfFilename] = useState<string | null>(null);
-  const [detailedReportPaymentLoading, setDetailedReportPaymentLoading] = useState(false);
   
   const searchParams = useSearchParams();
 
   // Bug #1 Fix: Redirect to /assessment if assessment was not completed
   useEffect(() => {
-    const completed = localStorage.getItem('assessmentCompleted');
-    const savedStyle = localStorage.getItem('attachmentStyle') as AttachmentStyle | null;
-    
-    if (!completed || !savedStyle) {
-      // Assessment not completed - redirect to assessment page
-      window.location.href = '/assessment';
-      return;
-    }
-    
-    setStyle(savedStyle);
-    
-    // Check for payment success
-    const paymentStatus = searchParams?.get('payment');
-    const planId = searchParams?.get('plan');
-    
-    if (paymentStatus === 'success' && planId) {
-      // Verify session ID matches (Bug #7 Fix)
-      const pendingSessionId = localStorage.getItem('pendingSessionId');
-      const currentSessionId = localStorage.getItem('paymentSessionId');
-      if (pendingSessionId && pendingSessionId !== currentSessionId) {
-        console.warn('Session ID mismatch - possible session hijacking attempt');
-        // Clear pending state but still allow the payment to proceed
-        localStorage.removeItem('pendingSessionId');
+    const loadResult = async () => {
+      const completed = localStorage.getItem('assessmentCompleted');
+      const savedStyle = localStorage.getItem('attachmentStyle') as AttachmentStyle | null;
+      
+      if (!completed || !savedStyle) {
+        // Assessment not completed - redirect to assessment page
+        window.location.href = '/assessment';
+        return;
       }
       
-      setPaid(true);
-      setShowPaywall(false);
-      localStorage.setItem('paymentSuccess', planId);
+      setStyle(savedStyle);
       
-      // Bug #2 & #3 Fix: If DETAILED_REPORT payment succeeded, unlock detailed report
-      if (planId === 'DETAILED_REPORT') {
-        setDetailedReportPaid(true);
-        localStorage.setItem('detailedReportPaid', 'true');
-        // Automatically generate the detailed report after payment
-        generateDetailedReport();
+      // Try to fetch from database first
+      try {
+        const sessionId = localStorage.getItem('quizSessionId');
+        if (sessionId) {
+          const response = await fetch(`/api/quiz/save-result?sessionId=${sessionId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.testResult) {
+              // Update from database
+              setStyle(data.testResult.primary_style as AttachmentStyle);
+              
+              // Check payment status from database
+              if (data.testResult.payment_status === 'completed') {
+                setPaid(true);
+                setShowPaywall(false);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch from database:', error);
+        // Fall back to localStorage
       }
       
-      // Clear pending session after successful payment
-      localStorage.removeItem('pendingSessionId');
-    } else {
-      // Check localStorage for previous payments
-      const savedPayment = localStorage.getItem('paymentSuccess');
-      if (savedPayment) {
+      // Check for payment success
+      const paymentStatus = searchParams?.get('payment');
+      const planId = searchParams?.get('plan');
+      
+      if (paymentStatus === 'success' && planId) {
+        // Verify session ID matches (Bug #7 Fix)
+        const pendingSessionId = localStorage.getItem('pendingSessionId');
+        const currentSessionId = localStorage.getItem('paymentSessionId');
+        if (pendingSessionId && pendingSessionId !== currentSessionId) {
+          console.warn('Session ID mismatch - possible session hijacking attempt');
+          // Clear pending state but still allow the payment to proceed
+          localStorage.removeItem('pendingSessionId');
+        }
+        
         setPaid(true);
+        setShowPaywall(false);
+        localStorage.setItem('paymentSuccess', planId);
+        
+        // Bug #2 & #3 Fix: If COMPLETE payment succeeded, unlock complete report
+        if (planId === 'COMPLETE') {
+          setDetailedReportPaid(true);
+          localStorage.setItem('detailedReportPaid', 'true');
+          // Automatically generate the detailed report after payment
+          generateDetailedReport();
+        }
+        
+        // Clear pending session after successful payment
+        localStorage.removeItem('pendingSessionId');
+      } else {
+        // Check localStorage for previous payments
+        const savedPayment = localStorage.getItem('paymentSuccess');
+        if (savedPayment) {
+          setPaid(true);
+        }
+        
+        // Check if detailed report was previously paid
+        const detailedPaid = localStorage.getItem('detailedReportPaid');
+        if (detailedPaid === 'true') {
+          setDetailedReportPaid(true);
+        }
       }
       
-      // Check if detailed report was previously paid
-      const detailedPaid = localStorage.getItem('detailedReportPaid');
-      if (detailedPaid === 'true') {
-        setDetailedReportPaid(true);
-      }
-    }
+      setIsLoading(false);
+    };
     
-    setIsLoading(false);
+    loadResult();
   }, [searchParams]);
 
   if (isLoading || !style) {
@@ -295,47 +310,8 @@ export default function ResultClient() {
       return;
     }
     
-    setDetailedReportPaymentLoading(true);
-    setAiError(null);
-    
-    try {
-      // Get or create session ID for payment tracking
-      let sessionId = localStorage.getItem('paymentSessionId');
-      if (!sessionId) {
-        sessionId = crypto.randomUUID();
-        localStorage.setItem('paymentSessionId', sessionId);
-      }
-      
-      // Call payment API to create order
-      const response = await fetch('/api/payment/paypal/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          planId: 'DETAILED_REPORT',
-          testResultId: style,
-          sessionId: sessionId,
-        }),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create payment order');
-      }
-      
-      // Redirect to PayPal approval URL
-      if (data.approvalUrl) {
-        // Save pending payment info and session ID
-        localStorage.setItem('pendingOrderId', data.orderId);
-        localStorage.setItem('pendingPlanId', 'DETAILED_REPORT');
-        localStorage.setItem('pendingSessionId', data.sessionId || sessionId);
-        // Redirect to PayPal
-        window.location.href = data.approvalUrl;
-      }
-    } catch (err) {
-      setAiError(err instanceof Error ? err.message : 'Payment failed');
-      setDetailedReportPaymentLoading(false);
-    }
+    // Redirect to checkout page for complete report
+    window.location.href = '/checkout?plan=COMPLETE';
   };
   
   const generateDetailedReport = async () => {
@@ -407,25 +383,28 @@ export default function ResultClient() {
     aiReport: aiDetailedReport || undefined,
   };
 
+  // Freemium fix: If not paid, show paywall instead of style
+  const showPaywallStyle = !paid;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-[#08090a] text-[#f7f8f8] py-12 px-4">
       {/* Payment Success Banner */}
       {paid && (
         <div className="max-w-4xl mx-auto mb-8">
-          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl p-6 shadow-lg">
+          <div className="bg-[#5e6ad2] text-white rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">🎉</span>
                 <div>
-                  <h3 className="font-bold text-lg">Payment Successful!</h3>
-                  <p className="text-green-100 text-sm">Your report is now unlocked</p>
+                  <h3 className="font-medium text-lg">Payment Successful!</h3>
+                  <p className="text-white/80 text-sm">Your report is now unlocked</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={generatePDF}
                   disabled={pdfGenerating}
-                  className="bg-white text-green-600 font-semibold py-2 px-6 rounded-xl hover:bg-green-50 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="bg-white text-[#0f1011] font-medium py-2 px-6 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   {pdfGenerating ? (
                     <>
@@ -444,21 +423,44 @@ export default function ResultClient() {
       )}
 
       <div className="max-w-4xl mx-auto">
-        {/* Result Header */}
-        <div className="text-center mb-12">
-          <p className="text-blue-600 font-semibold mb-2">Your Attachment Style Is</p>
-          <h1 className={`text-5xl font-bold ${styleInfo.color} mb-4`}>
-            {styleInfo.icon} {style}
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {styleInfo.description}
-          </p>
-        </div>
+        {/* Result Header - Paywall for unpaid users */}
+        {showPaywallStyle ? (
+          /* Unpaid: Show paywall instead of style */
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-[#5e6ad2]/20 to-[#7170ff]/20 rounded-full mb-6">
+              <span className="text-5xl">🔒</span>
+            </div>
+            <h1 className="text-4xl font-medium text-[#f7f8f8] mb-4">
+              Your Results Are Ready!
+            </h1>
+            <p className="text-xl text-[#8a8f98] max-w-2xl mx-auto mb-8">
+              Please choose a plan below to unlock your complete attachment style analysis.
+            </p>
+            <button
+              onClick={() => setShowPaywall(true)}
+              className="bg-[#5e6ad2] text-white font-medium py-3 px-8 rounded-md hover:bg-[#828fff] transition-colors"
+            >
+              View Pricing Plans
+            </button>
+          </div>
+        ) : (
+          /* Paid: Show actual style */
+          <div className="text-center mb-12">
+            <p className="text-[#7170ff] font-medium mb-2">Your Attachment Style Is</p>
+            <h1 className={`text-5xl font-medium ${styleInfo.color} mb-4`}>
+              {styleInfo.icon} {style}
+            </h1>
+            <p className="text-xl text-[#8a8f98] max-w-2xl mx-auto">
+              {styleInfo.description}
+            </p>
+          </div>
+        )}
 
-        {/* AI Analysis Section - Always visible */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">🤖 BondType Analysis</h2>
-          <p className="text-gray-600 text-sm mb-4 italic">
+        {/* AI Analysis Section - Only visible after payment */}
+        {paid && (
+          <div className="bg-[#191a1b] rounded-xl p-8 mb-8 border border-[rgba(255,255,255,0.08)]">
+            <h2 className="text-2xl font-medium text-[#f7f8f8] mb-4">🤖 BondType Analysis</h2>
+          <p className="text-[#8a8f98] text-sm mb-4 italic">
             This report is generated using BondType's proprietary analysis engine, which combines established psychological frameworks with advanced computational methods to deliver personalized relationship insights.
           </p>
 
@@ -466,7 +468,7 @@ export default function ResultClient() {
             <button
               onClick={generateAiSummary}
               disabled={aiSummaryLoading}
-              className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-[#5e6ad2] text-white font-medium py-2 px-6 rounded-md hover:bg-[#828fff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {aiSummaryLoading ? (
                 <>
@@ -481,14 +483,10 @@ export default function ResultClient() {
 
             <button
               onClick={handleDetailedReportClick}
-              disabled={aiDetailedLoading || detailedReportPaymentLoading || !!aiDetailedReport}
-              className={`bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 relative`}
+              disabled={aiDetailedLoading || !!aiDetailedReport}
+              className={`bg-[#7170ff] text-white font-medium py-2 px-6 rounded-md hover:bg-[#828fff] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 relative`}
             >
-              {detailedReportPaymentLoading ? (
-                <>
-                  <span className="animate-spin">⏳</span> Redirecting to payment...
-                </>
-              ) : aiDetailedLoading ? (
+              {aiDetailedLoading ? (
                 <>
                   <span className="animate-spin">⏳</span> Generating...
                 </>
@@ -498,10 +496,10 @@ export default function ResultClient() {
                 </>
               ) : (
                 <>
-                  <span>📄</span> Generate BondType Detailed Report
+                  <span>📄</span> Get Detailed Report
                   {!detailedReportPaid && (
-                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold py-1 px-2 rounded-full shadow">
-                      $6.99
+                    <span className="absolute -top-2 -right-2 bg-[#5e6ad2] text-white text-xs font-medium py-1 px-2 rounded-full">
+                      $24.99
                     </span>
                   )}
                 </>
@@ -510,20 +508,20 @@ export default function ResultClient() {
           </div>
 
           {aiError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
+            <div className="bg-[rgba(220,38,38,0.1)] border border-[rgba(220,38,38,0.2)] text-[#ef4444] px-4 py-3 rounded-md mb-4">
               ❌ Error: {aiError}
             </div>
           )}
 
           {aiSummary && (
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-4">
-              <h3 className="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
+            <div className="bg-[rgba(94,106,210,0.1)] border border-[rgba(94,106,210,0.2)] rounded-md p-6 mb-4">
+              <h3 className="text-lg font-medium text-[#5e6ad2] mb-3 flex items-center gap-2">
                 <span>📝</span> BondType Summary
               </h3>
               <ul className="space-y-2">
                 {aiSummary.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-blue-900">
-                    <span className="text-blue-500 mt-1">•</span>
+                  <li key={index} className="flex items-start gap-2 text-[#d0d6e0]">
+                    <span className="text-[#5e6ad2] mt-1">•</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -532,38 +530,38 @@ export default function ResultClient() {
           )}
 
           {aiDetailedReport && (
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-purple-800 mb-3 flex items-center gap-2">
+            <div className="bg-[rgba(113,112,255,0.1)] border border-[rgba(113,112,255,0.2)] rounded-md p-6">
+              <h3 className="text-lg font-medium text-[#7170ff] mb-3 flex items-center gap-2">
                 <span>📄</span> BondType Detailed Report
               </h3>
-              <div className="space-y-4 text-purple-900">
+              <div className="space-y-4 text-[#d0d6e0]">
                 {aiDetailedReport.overview && (
                   <div>
-                    <h4 className="font-semibold mb-1">Overview</h4>
+                    <h4 className="font-medium mb-1">Overview</h4>
                     <p className="text-sm">{aiDetailedReport.overview}</p>
                   </div>
                 )}
                 {aiDetailedReport.relationshipPatterns && (
                   <div>
-                    <h4 className="font-semibold mb-1">Relationship Patterns</h4>
+                    <h4 className="font-medium mb-1">Relationship Patterns</h4>
                     <p className="text-sm">{aiDetailedReport.relationshipPatterns}</p>
                   </div>
                 )}
                 {aiDetailedReport.communication && (
                   <div>
-                    <h4 className="font-semibold mb-1">Communication</h4>
+                    <h4 className="font-medium mb-1">Communication</h4>
                     <p className="text-sm">{aiDetailedReport.communication}</p>
                   </div>
                 )}
                 {aiDetailedReport.challenges && (
                   <div>
-                    <h4 className="font-semibold mb-1">Common Challenges</h4>
+                    <h4 className="font-medium mb-1">Common Challenges</h4>
                     <p className="text-sm">{aiDetailedReport.challenges}</p>
                   </div>
                 )}
                 {aiDetailedReport.recommendations && aiDetailedReport.recommendations.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-1">Recommendations</h4>
+                    <h4 className="font-medium mb-1">Recommendations</h4>
                     <ul className="list-disc list-inside text-sm space-y-1">
                       {aiDetailedReport.recommendations.map((rec, i) => (
                         <li key={i}>{rec}</li>
@@ -573,29 +571,30 @@ export default function ResultClient() {
                 )}
                 {aiDetailedReport.compatibleDynamics && (
                   <div>
-                    <h4 className="font-semibold mb-1">Compatible Relationship Dynamics</h4>
+                    <h4 className="font-medium mb-1">Compatible Relationship Dynamics</h4>
                     <p className="text-sm">{aiDetailedReport.compatibleDynamics}</p>
                   </div>
                 )}
               </div>
-              <p className="text-gray-400 text-xs mt-6 pt-4 border-t border-purple-200">
+              <p className="text-[#8a8f98] text-xs mt-6 pt-4 border-t border-[rgba(113,112,255,0.2)]">
                 BondType uses an AI-powered analysis system to generate personalized relationship reports, designed and validated by our research team.
               </p>
             </div>
           )}
         </div>
+        )}
 
         {/* Content - Conditional based on payment */}
         {paid ? (
           /* Full Report - Shown after payment */
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+          <div className="bg-[#191a1b] rounded-xl p-8 mb-8 border border-[rgba(255,255,255,0.08)]">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">📋 Key Characteristics</h2>
+              <h2 className="text-2xl font-medium text-[#f7f8f8] mb-4">📋 Key Characteristics</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 {styleInfo.characteristics.map((char, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-gray-700">{char}</span>
+                    <div className="w-2 h-2 bg-[#7170ff] rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-[#d0d6e0]">{char}</span>
                   </div>
                 ))}
               </div>
@@ -603,23 +602,23 @@ export default function ResultClient() {
 
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-bold text-green-600 mb-3">💪 Your Strengths</h3>
+                <h3 className="text-xl font-medium text-[#5e6ad2] mb-3">💪 Your Strengths</h3>
                 <ul className="space-y-2">
                   {styleInfo.strengths.map((strength, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <span className="text-green-500">✓</span>
-                      <span className="text-gray-700">{strength}</span>
+                      <span className="text-[#5e6ad2]">✓</span>
+                      <span className="text-[#d0d6e0]">{strength}</span>
                     </li>
                   ))}
                 </ul>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-orange-600 mb-3">🌱 Growth Areas</h3>
+                <h3 className="text-xl font-medium text-[#7170ff] mb-3">🌱 Growth Areas</h3>
                 <ul className="space-y-2">
                   {styleInfo.growthAreas.map((area, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <span className="text-orange-500">→</span>
-                      <span className="text-gray-700">{area}</span>
+                      <span className="text-[#7170ff]">→</span>
+                      <span className="text-[#d0d6e0]">{area}</span>
                     </li>
                   ))}
                 </ul>
@@ -627,11 +626,11 @@ export default function ResultClient() {
             </div>
             
             {/* Email PDF Button */}
-            <div className="mt-8 pt-8 border-t border-gray-200 text-center">
-              <p className="text-gray-600 mb-4">Want a beautifully designed PDF report to keep?</p>
+            <div className="mt-8 pt-8 border-t border-[rgba(255,255,255,0.08)] text-center">
+              <p className="text-[#8a8f98] mb-4">Want a beautifully designed PDF report to keep?</p>
               <button
                 onClick={() => setShowEmailModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+                className="bg-[#5e6ad2] text-white font-medium py-3 px-8 rounded-md hover:bg-[#828fff] transition-colors"
               >
                 📧 Send PDF to My Email
               </button>
@@ -639,18 +638,18 @@ export default function ResultClient() {
           </div>
         ) : (
           /* Blurred Preview Section (Paywall) */
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 relative overflow-hidden">
+          <div className="bg-[#191a1b] rounded-xl p-8 mb-8 relative overflow-hidden border border-[rgba(255,255,255,0.08)]">
             {/* Blur overlay */}
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="absolute inset-0 bg-[#191a1b]/60 backdrop-blur-sm z-10 flex items-center justify-center">
               <div className="text-center z-20">
                 <div className="text-6xl mb-4">🔒</div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Unlock Your Full Report</h2>
-                <p className="text-gray-600 mb-6 max-w-md">
+                <h2 className="text-2xl font-medium text-[#f7f8f8] mb-2">Unlock Your Full Report</h2>
+                <p className="text-[#8a8f98] mb-6 max-w-md">
                   See the complete analysis, detailed characteristics, and personalized recommendations by choosing a plan below.
                 </p>
                 <button
                   onClick={() => setShowPaywall(true)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+                  className="bg-[#5e6ad2] text-white font-medium py-3 px-8 rounded-md hover:bg-[#828fff] transition-colors"
                 >
                   View Pricing Plans
                 </button>
@@ -660,12 +659,12 @@ export default function ResultClient() {
             {/* Blurred content preview */}
             <div className="blur-[8px] opacity-50">
               <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Key Characteristics</h2>
+                <h2 className="text-2xl font-medium text-[#f7f8f8] mb-4">Key Characteristics</h2>
                 <div className="grid md:grid-cols-2 gap-4">
                   {styleInfo.characteristics.map((char, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-700">{char}</span>
+                      <div className="w-2 h-2 bg-[#7170ff] rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-[#d0d6e0]">{char}</span>
                     </div>
                   ))}
                 </div>
@@ -673,23 +672,23 @@ export default function ResultClient() {
 
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-xl font-bold text-green-600 mb-3">Your Strengths</h3>
+                  <h3 className="text-xl font-medium text-[#5e6ad2] mb-3">Your Strengths</h3>
                   <ul className="space-y-2">
                     {styleInfo.strengths.map((strength, index) => (
                       <li key={index} className="flex items-start gap-3">
-                        <span className="text-green-500">✓</span>
-                        <span className="text-gray-700">{strength}</span>
+                        <span className="text-[#5e6ad2]">✓</span>
+                        <span className="text-[#d0d6e0]">{strength}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-orange-600 mb-3">Growth Areas</h3>
+                  <h3 className="text-xl font-medium text-[#7170ff] mb-3">Growth Areas</h3>
                   <ul className="space-y-2">
                     {styleInfo.growthAreas.map((area, index) => (
                       <li key={index} className="flex items-start gap-3">
-                        <span className="text-orange-500">→</span>
-                        <span className="text-gray-700">{area}</span>
+                        <span className="text-[#7170ff]">→</span>
+                        <span className="text-[#d0d6e0]">{area}</span>
                       </li>
                     ))}
                   </ul>
@@ -703,29 +702,29 @@ export default function ResultClient() {
         {showPaywall && !paid && (
           <div className="animate-fade-in">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Choose Your Report Plan</h2>
-              <p className="text-gray-600">Unlock your complete attachment style analysis</p>
+              <h2 className="text-3xl font-medium text-[#f7f8f8] mb-2">Choose Your Report Plan</h2>
+              <p className="text-[#8a8f98]">Unlock your complete attachment style analysis</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {PRICING_PLANS.map((plan) => (
                 <div
                   key={plan.planId}
-                  className={`bg-white rounded-2xl shadow-lg overflow-hidden ${
-                    plan.featured ? 'border-2 border-blue-500 relative transform md:scale-105' : 'border border-gray-200'
+                  className={`bg-[#191a1b] rounded-xl overflow-hidden border ${
+                    plan.featured ? 'border-[#5e6ad2] relative transform md:scale-105' : 'border border-[rgba(255,255,255,0.08)]'
                   }`}
                 >
                   {plan.featured && (
-                    <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
+                    <div className="bg-[#5e6ad2] text-white text-center py-2 text-sm font-medium">
                       Most Popular
                     </div>
                   )}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
+                    <h3 className="text-xl font-medium text-[#f7f8f8] mb-2">{plan.name}</h3>
+                    <p className="text-[#8a8f98] text-sm mb-4">{plan.description}</p>
                     <div className="mb-6">
-                      <span className="text-4xl font-bold text-gray-900">${plan.price}</span>
-                      <span className="text-gray-600"> USD</span>
+                      <span className="text-4xl font-medium text-[#f7f8f8]">${plan.price}</span>
+                      <span className="text-[#8a8f98]"> USD</span>
                     </div>
                     <ul className="space-y-3 mb-6">
                       {plan.features.map((feature, index) => (

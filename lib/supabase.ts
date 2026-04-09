@@ -372,4 +372,184 @@ export async function savePayment(
   }
 }
 
+// ============================================
+// QUIZ RESPONSES MANAGEMENT
+// ============================================
+
+export interface QuizResponse {
+  id: string;
+  session_id: string;
+  question_id: number;
+  answer: number;
+  created_at: string;
+}
+
+// Save a single quiz response
+export async function saveQuizResponse(
+  sessionId: string,
+  questionId: number,
+  answer: number
+): Promise<QuizResponse | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('quiz_responses')
+      .insert({
+        session_id: sessionId,
+        question_id: questionId,
+        answer: answer
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error saving quiz response:', error);
+      return null;
+    }
+
+    return data as QuizResponse;
+  } catch (error) {
+    console.error('Error saving quiz response:', error);
+    return null;
+  }
+}
+
+// Get all quiz responses for a session
+export async function getQuizResponses(sessionId: string): Promise<QuizResponse[]> {
+  try {
+    const { data, error } = await supabase
+      .from('quiz_responses')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('question_id', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching quiz responses:', error);
+      return [];
+    }
+
+    return data as QuizResponse[];
+  } catch (error) {
+    console.error('Error fetching quiz responses:', error);
+    return [];
+  }
+}
+
+// ============================================
+// REPORTS MANAGEMENT
+// ============================================
+
+export interface Report {
+  id: string;
+  user_id?: string;
+  session_id: string;
+  attachment_type: string;
+  scores: {
+    secure: number;
+    anxious: number;
+    avoidant: number;
+    disorganized: number;
+  };
+  premium_unlocked: boolean;
+  created_at: string;
+}
+
+// Save a report
+export async function saveReport(
+  sessionId: string,
+  attachmentType: string,
+  scores: Report['scores'],
+  premiumUnlocked: boolean = false,
+  userId?: string
+): Promise<Report | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('reports')
+      .insert({
+        session_id: sessionId,
+        attachment_type: attachmentType,
+        scores: scores,
+        premium_unlocked: premiumUnlocked,
+        user_id: userId
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error saving report:', error);
+      return null;
+    }
+
+    return data as Report;
+  } catch (error) {
+    console.error('Error saving report:', error);
+    return null;
+  }
+}
+
+// Get report by session ID
+export async function getReportBySession(sessionId: string): Promise<Report | null> {
+  try {
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error('Error fetching report:', error);
+      return null;
+    }
+
+    return data as Report;
+  } catch (error) {
+    console.error('Error fetching report:', error);
+    return null;
+  }
+}
+
+// ============================================
+// USERS MANAGEMENT
+// ============================================
+
+export interface User {
+  id: string;
+  email: string;
+  created_at: string;
+}
+
+// Create or get user by email
+export async function createOrGetUser(email: string): Promise<User | null> {
+  try {
+    // First try to get existing user
+    const { data: existingUser, error: getError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (!getError && existingUser) {
+      return existingUser as User;
+    }
+
+    // Create new user
+    const { data: newUser, error: createError } = await supabaseAdmin
+      .from('users')
+      .insert({ email })
+      .select()
+      .single();
+
+    if (createError) {
+      console.error('Error creating user:', createError);
+      return null;
+    }
+
+    return newUser as User;
+  } catch (error) {
+    console.error('Error creating/getting user:', error);
+    return null;
+  }
+}
+
 

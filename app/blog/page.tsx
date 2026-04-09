@@ -22,7 +22,7 @@ export default function BlogPage() {
   const tags = getAllTags();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-[#0a0a0f] font-sans text-[#F8FAFC]">
       {/* Hero Section */}
       <BlogHero stats={stats} />
 
@@ -33,7 +33,7 @@ export default function BlogPage() {
             <BlogList posts={posts} categories={categories} />
 
             {/* Newsletter CTA */}
-            <section className="mt-16 relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-10 text-white">
+            <section className="mt-16 relative overflow-hidden bg-gradient-to-br from-[#0D1B2A] via-[#5B4B8A] to-[#2DD4BF] rounded-3xl p-10 text-white border border-[#5B4B8A]/30">
               {/* Decorative elements */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-2xl"></div>
@@ -44,19 +44,19 @@ export default function BlogPage() {
                   Join 10,000+ readers
                 </div>
                 <h3 className="text-3xl font-bold mb-4">Stay Updated</h3>
-                <p className="text-blue-100 mb-8 text-lg">
+                <p className="text-[#F8FAFC]/80 mb-8 text-lg">
                   Get the latest articles on attachment styles and relationships delivered to your inbox. No spam, unsubscribe anytime.
                 </p>
                 <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                   <input
                     type="email"
                     placeholder="Your email address"
-                    className="flex-1 px-5 py-3.5 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 bg-white/95 backdrop-blur-sm"
+                    className="flex-1 px-5 py-3.5 rounded-xl text-[#0a0a0f] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 bg-white/95 backdrop-blur-sm"
                     required
                   />
                   <button
                     type="submit"
-                    className="px-6 py-3.5 bg-white text-blue-600 font-bold rounded-xl hover:bg-gray-50 transition-all hover:shadow-lg hover:shadow-white/20 active:scale-95"
+                    className="px-6 py-3.5 bg-white text-[#0D1B2A] font-bold rounded-xl hover:bg-gray-50 transition-all hover:shadow-lg hover:shadow-white/20 active:scale-95"
                   >
                     Subscribe
                   </button>

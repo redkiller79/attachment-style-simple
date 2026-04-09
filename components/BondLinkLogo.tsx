@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function BondLinkLogo({ size = 48, showText = true, variant = 'dark' }: Props) {
-  const textColor = variant === 'dark' ? logoColors.slate : '#FFFFFF';
+  const textColor = variant === 'dark' ? logoColors.stellarWhite : '#FFFFFF';
   const iconSize = size;
   const iconStroke = Math.max(2, iconSize / 16);
 
@@ -47,7 +47,7 @@ export function BondLinkLogo({ size = 48, showText = true, variant = 'dark' }: P
           color: textColor,
           letterSpacing: '-0.02em',
         }}>
-          bond<span style={{ fontWeight: 500 }}>type</span>
+          Bond<span style={{ fontWeight: 500 }}>Type</span>
         </span>
       )}
     </div>

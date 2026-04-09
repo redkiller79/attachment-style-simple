@@ -7,9 +7,14 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-white">
+    <div className="min-h-screen bg-[#0a0a0f] font-sans text-[#F8FAFC]">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0a0a0f] via-[#0D1B2A] to-[#5B4B8A] py-20">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-purple-400 rounded-full blur-3xl" />
+        </div>
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">Privacy Policy</h1>
           <p className="text-xl opacity-90 max-w-3xl mx-auto">
@@ -19,17 +24,21 @@ export default function PrivacyPage() {
       </section>
 
       {/* Content */}
-      <section className="py-16">
+      <section className="py-16 relative">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#2DD4BF] rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-[#5B4B8A] rounded-full blur-3xl" />
+        </div>
         <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-white rounded-2xl p-8 md:p-12 shadow-lg">
+          <div className="bg-[#0D1B2A] rounded-2xl p-8 md:p-12 shadow-lg border border-[#5B4B8A]/30">
             
             <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Information We Collect</h2>
-                <p className="text-gray-600 mb-4">
+                <h2 className="text-2xl font-bold text-[#F8FAFC] mb-4">1. Information We Collect</h2>
+                <p className="text-[#F8FAFC]/80 mb-4">
                   We collect information you provide directly to us, including:
                 </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <ul className="list-disc list-inside text-[#F8FAFC]/80 space-y-2">
                   <li>Assessment responses and results</li>
                   <li>Email address (if you subscribe to our newsletter)</li>
                   <li>Payment information (processed securely through our payment provider)</li>
@@ -38,11 +47,11 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">2. How We Use Your Information</h2>
-                <p className="text-gray-600 mb-4">
+                <h2 className="text-2xl font-bold text-[#F8FAFC] mb-4">2. How We Use Your Information</h2>
+                <p className="text-[#F8FAFC]/80 mb-4">
                   We use the information we collect to:
                 </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <ul className="list-disc list-inside text-[#F8FAFC]/80 space-y-2">
                   <li>Provide and improve our assessment services</li>
                   <li>Send you newsletters and updates (with your consent)</li>
                   <li>Process payments and deliver purchased reports</li>

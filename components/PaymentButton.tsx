@@ -80,8 +80,8 @@ export default function PaymentButton({
         disabled={isLoading}
         className={`
           w-full py-3 px-6 rounded-lg font-semibold text-white
-          bg-gradient-to-r from-blue-600 to-blue-700
-          hover:from-blue-700 hover:to-blue-800
+          bg-gradient-to-r from-[#2DD4BF] to-[#5B4B8A]
+          hover:from-[#2DD4BF]/80 hover:to-[#5B4B8A]/80
           disabled:opacity-50 disabled:cursor-not-allowed
           transition-all duration-200
           flex items-center justify-center gap-2
@@ -121,7 +121,7 @@ export default function PaymentButton({
         <p className="mt-2 text-sm text-red-500 text-center">{error}</p>
       )}
       
-      <p className="mt-2 text-xs text-gray-500 text-center">
+      <p className="mt-2 text-xs text-[#F8FAFC]/70 text-center">
         Secure payment powered by PayPal
       </p>
     </div>

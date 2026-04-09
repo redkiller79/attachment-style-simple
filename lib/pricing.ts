@@ -1,33 +1,28 @@
-// 定价配置 - 纯静态配置，不需要 API credentials
-// 可以安全地在客户端组件中使用
+// 定价配置 - 统一价格常量
+// Basic Report: $14.99
+// Complete Report + AI: $24.99 (锚定原价 $49.99 折扣)
 
 export const PRICING = {
   BASIC: {
-    id: 'basic_report',
+    id: 'basic_plan',
     name: 'Basic Report',
-    price: 12.00,
+    price: 14.99,
+    originalPrice: 14.99,
     currency: 'USD',
-    description: 'Basic attachment style analysis with personalized insights',
-  },
-  PREMIUM: {
-    id: 'premium_report',
-    name: 'Premium Report',
-    price: 15.00,
-    currency: 'USD',
-    description: 'Comprehensive report with relationship recommendations',
+    description: 'Complete attachment style analysis with personalized insights',
   },
   COMPLETE: {
-    id: 'complete_report',
-    name: 'Complete Report',
-    price: 9.99,
+    id: 'complete_plan',
+    name: 'Complete Report + AI',
+    price: 24.99,
+    originalPrice: 49.99,
     currency: 'USD',
-    description: 'Full 36-question assessment with complete attachment profile and PDF report',
-  },
-  DETAILED_REPORT: {
-    id: 'detailed_report',
-    name: 'Detailed Report',
-    price: 6.99,
-    currency: 'USD',
-    description: 'Detailed analysis with relationship patterns and personalized recommendations, powered by BondType',
+    description: 'Full 36-question assessment with complete attachment profile, PDF report, and AI-powered insights',
   },
 };
+
+// For backward compatibility with code referencing BASIC/COMPLETE as planIds
+export const PLAN_IDS = {
+  BASIC: 'BASIC',
+  COMPLETE: 'COMPLETE',
+} as const;
