@@ -7,6 +7,7 @@ const footerLinks = {
   ],
   Resources: [
     { name: 'Blog', href: '/blog' },
+    { name: 'FAQ', href: '/faq' },
   ],
   Company: [
     { name: 'About', href: '/about' },

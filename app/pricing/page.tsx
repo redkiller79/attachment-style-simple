@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PRICING } from '@/lib/pricing';
+import PaymentButton from '@/components/PaymentButton';
 
 export const metadata = {
   title: 'Pricing - Attachment Style Assessment',
@@ -101,18 +102,10 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href={`/checkout?plan=${plan.id}`}
-                  className="w-full py-3 px-6 rounded-md font-medium text-white transition-colors flex items-center justify-center gap-2"
-                  style={{
-                    background: plan.buttonBg,
-                  }}
-                >
-                  <span>{plan.buttonText || (plan.id === 'BASIC' ? 'Start with Basic' : 'Get Complete Report')}</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </Link>
+                <PaymentButton
+                  planId={plan.id === 'BASIC' ? 'BASIC' : 'COMPLETE'}
+                  className="w-full"
+                />
               </div>
             </div>
           ))}
