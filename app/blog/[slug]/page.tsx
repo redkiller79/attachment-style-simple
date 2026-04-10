@@ -230,6 +230,91 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </div>
       </article>
+
+      {/* FAQPage Schema for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What are the four attachment styles?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The four attachment styles are: Secure (comfortable with intimacy and independence), Anxious (craves closeness but fears abandonment), Avoidant (values independence and avoids emotional intimacy), and Fearful-Avoidant (wants closeness but fears vulnerability)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can attachment styles change?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. While attachment patterns are relatively stable, research shows they can shift through self-awareness, therapy, secure relationships, and intentional practice. This is called earned security."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How common is each attachment style?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Research suggests approximately 56% of people are Secure, 19% are Anxious, 25% are Avoidant, and 5% are Fearful-Avoidant in the general population."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What's the difference between anxious and avoidant attachment?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Anxious attachment involves fear of abandonment and a need for reassurance; avoidant attachment involves discomfort with emotional intimacy and a preference for independence. They often create a pursue-withdraw dynamic in relationships."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How can I develop a more secure attachment style?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Focus on self-awareness, consider therapy (especially emotion-focused or attachment-based approaches), cultivate secure relationships, practice emotional regulation through mindfulness, and intentionally practice new responses to your old triggers."
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      {/* Article Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": post.title,
+            "description": post.description,
+            "datePublished": post.date,
+            "dateModified": post.date,
+            "author": {
+              "@type": "Organization",
+              "name": "BondType",
+              "url": "https://bondtype.com"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "BondType",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://bondtype.com/logo.png"
+              }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://bondtype.com/blog/${post.slug}`
+            }
+          })
+        }}
+      />
     </div>
   );
 }
