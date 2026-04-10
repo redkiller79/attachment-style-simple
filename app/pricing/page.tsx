@@ -22,6 +22,7 @@ export default function PricingPage() {
       borderColor: 'rgba(255,255,255,0.08)',
       buttonBg: '#5e6ad2',
       popular: false,
+      buttonText: 'Start with Basic',
     },
     {
       id: 'COMPLETE',
@@ -40,6 +41,7 @@ export default function PricingPage() {
       borderColor: '#5e6ad2',
       buttonBg: 'linear-gradient(to right, #5e6ad2, #7170ff)',
       popular: true,
+      buttonText: 'Get Complete Report',
     },
   ];
 

@@ -7,7 +7,7 @@ import { BondLinkLogo } from '../BondLinkLogo';
 const navItems = [
   { name: 'Home', href: '/' },
   { name: 'Assessment', href: '/test' },
-  { name: 'Cosmic Blueprint', href: '/cosmic-blueprint' },
+  { name: 'FAQ', href: '/faq' },
   { name: 'Blog', href: '/blog' },
   { name: 'Pricing', href: '/pricing' },
   { name: 'About', href: '/about' },

@@ -10,6 +10,7 @@ export const PRICING = {
     originalPrice: 14.99,
     currency: 'USD',
     description: 'Complete attachment style analysis with personalized insights',
+    buttonText: 'Start with Basic',
   },
   COMPLETE: {
     id: 'complete_plan',
@@ -18,6 +19,7 @@ export const PRICING = {
     originalPrice: 49.99,
     currency: 'USD',
     description: 'Full 36-question assessment with complete attachment profile, PDF report, and AI-powered insights',
+    buttonText: 'Get Complete Report',
   },
 };
 
