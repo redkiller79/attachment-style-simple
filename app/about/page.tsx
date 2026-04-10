@@ -40,22 +40,15 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-[#F8FAFC] mb-6">Why We Built This</h2>
+              <h2 className="text-3xl font-bold text-[#F8FAFC] mb-6">Why We Built BondType</h2>
               <p className="text-[#F8FAFC]/70 mb-4">
-                A few years back, one of our co-founders kept ending up in relationships that felt like
-                Groundhog Day — same arguments, same patterns, different person. A therapist mentioned
-                attachment styles, and something clicked.
+                <strong>BondType exists because understanding your attachment style changes how you see your relationships.</strong> Our co-founder spent years in repetitive relationship patterns before a therapist introduced attachment theory — and something clicked.
               </p>
               <p className="text-[#F8FAFC]/70 mb-4">
-                Once they understood their anxious attachment, the patterns they'd blamed on bad luck or
-                bad partners suddenly had a shape. That led us to look into the research properly — and we
-                found something remarkable: most people have no idea this framework exists, even though it's
-                been studied for decades.
+                Once they understood their <strong>anxious attachment style</strong>, patterns they'd blamed on bad luck or incompatible partners suddenly had a name and a structure. Research shows that when people understand their attachment style, they make more intentional choices in relationships and communicate more effectively with partners.
               </p>
               <p className="text-[#F8FAFC]/70">
-                BondType started as a small side project to make that information more accessible.
-                We wanted to build something that could give people the same "oh, that's what this is"
-                moment we had — without needing a therapist to point the way.
+                BondType started as a side project to make that "aha" moment accessible to more people — without needing a therapist to point the way. We build tools that help you understand your relationship patterns so you can build healthier connections.
               </p>
             </div>
             <div className="bg-[#0D1B2A] border border-[#5B4B8A]/30 rounded-2xl p-8">
@@ -329,6 +322,94 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+
+      {/* FAQPage Schema for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is BondType?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "BondType is a science-based attachment style assessment that helps people understand their relationship patterns. It provides personalized insights based on established psychological research."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What are the four attachment styles?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The four attachment styles are: Secure (comfortable with intimacy and independence), Anxious (craves closeness but fears abandonment), Avoidant (values independence over intimacy), and Fearful-Avoidant (wants closeness but fears vulnerability)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is BondType based on scientific research?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. BondType is based on established psychological research including the Experiences in Close Relationships (ECR) scale and attachment theory developed by John Bowlby and expanded by Mary Ainsworth."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How long does the BondType assessment take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The assessment takes approximately 10-15 minutes to complete."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is my data private with BondType?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. BondType encrypts data at rest and in transit, never sells personal information, and only emails users who explicitly opt in."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can my attachment style change over time?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. While attachment styles are relatively stable, they can evolve through self-awareness, therapy, and healthy relationship experiences."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How is BondType different from personality tests like MBTI?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Attachment styles specifically describe your pattern of seeking and maintaining closeness in relationships, rooted in developmental psychology. Personality tests describe stable traits. They are complementary frameworks."
+                }
+              }
+            ]
+          })
+        }}
+      />
+
+      {/* AboutPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "name": "About BondType",
+            "description": "BondType helps people understand their attachment style and build healthier relationships through science-based assessments.",
+            "url": "https://bondtype.com/about",
+            "publisher": {
+              "@type": "Organization",
+              "name": "BondType",
+              "url": "https://bondtype.com"
+            }
+          })
+        }}
+      />
     </div>
   );
 }
