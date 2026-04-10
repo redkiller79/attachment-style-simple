@@ -1,40 +1,38 @@
 import { Metadata } from 'next';
-import { getAllPosts, getAllTags } from '@/lib/blog';
+import { getAllPosts, getAllCategories } from '@/lib/blog';
 import Link from 'next/link';
 
-interface TagPageProps {
-  params: Promise<{ tag: string }>;
+interface CategoryPageProps {
+  params: Promise<{ category: string }>;
 }
 
-export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
-  const { tag } = await params;
-  const decodedTag = decodeURIComponent(tag);
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { category } = await params;
+  const decodedCategory = decodeURIComponent(category);
   
   return {
-    title: `#${decodedTag} - BondType Blog`,
-    description: `Articles tagged with ${decodedTag} on BondType`,
+    title: `${decodedCategory} - BondType Blog`,
+    description: `Articles in the ${decodedCategory} category on BondType`,
   };
 }
 
 export async function generateStaticParams() {
-  const tags = getAllTags();
+  const categories = getAllCategories();
   
-  return tags.map((tag) => ({
-    tag: tag.toLowerCase().replace(/\s+/g, '-'),
+  return categories.map((category) => ({
+    category: category.toLowerCase().replace(/\s+/g, '-'),
   }));
 }
 
-export default async function TagPage({ params }: TagPageProps) {
-  const { tag } = await params;
-  const decodedTag = decodeURIComponent(tag);
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { category } = await params;
+  const decodedCategory = decodeURIComponent(category);
   const allPosts = getAllPosts();
-  const tags = getAllTags();
+  const categories = getAllCategories();
   
-  // Filter posts by tag (case-insensitive)
+  // Filter posts by category (case-insensitive)
   const filteredPosts = allPosts.filter((post) => 
-    post.tags?.some((t) => 
-      t.toLowerCase().replace(/\s+/g, '-') === tag.toLowerCase()
-    )
+    post.category?.toLowerCase().replace(/\s+/g, '-') === category.toLowerCase()
   );
   
   return (
@@ -46,10 +44,10 @@ export default async function TagPage({ params }: TagPageProps) {
             ← Back to Blog
           </Link>
           <h1 className="text-4xl font-bold text-[#f7f8f8] mb-4">
-            #{decodedTag}
+            {decodedCategory}
           </h1>
           <p className="text-[#8a8f98]">
-            {filteredPosts.length} article{filteredPosts.length !== 1 ? 's' : ''} tagged with "{decodedTag}"
+            {filteredPosts.length} article{filteredPosts.length !== 1 ? 's' : ''} in this category
           </p>
         </div>
         
@@ -87,20 +85,6 @@ export default async function TagPage({ params }: TagPageProps) {
                   <p className="text-[#8a8f98] text-sm line-clamp-3">
                     {post.description}
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {post.tags?.slice(0, 3).map((t) => (
-                      <span
-                        key={t}
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          t.toLowerCase().replace(/\s+/g, '-') === tag.toLowerCase()
-                            ? 'bg-[#5e6ad2] text-white'
-                            : 'bg-[rgba(255,255,255,0.08)] text-[#8a8f98]'
-                        }`}
-                      >
-                        #{t}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               </Link>
             ))}
@@ -109,7 +93,7 @@ export default async function TagPage({ params }: TagPageProps) {
           <div className="text-center py-20">
             <h2 className="text-2xl font-semibold text-[#f7f8f8] mb-4">No articles found</h2>
             <p className="text-[#8a8f98] mb-8">
-              No articles have been tagged with "#{decodedTag}" yet.
+              No articles in the "{decodedCategory}" category yet.
             </p>
             <Link
               href="/blog"
@@ -120,17 +104,17 @@ export default async function TagPage({ params }: TagPageProps) {
           </div>
         )}
         
-        {/* Other Tags */}
+        {/* Other Categories */}
         <div className="mt-16 pt-8 border-t border-[rgba(255,255,255,0.08)]">
-          <h3 className="text-lg font-semibold text-[#f7f8f8] mb-4">Explore Other Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {tags.filter((t) => t.toLowerCase().replace(/\s+/g, '-') !== tag.toLowerCase()).map((t) => (
+          <h3 className="text-lg font-semibold text-[#f7f8f8] mb-4">Explore Other Categories</h3>
+          <div className="flex flex-wrap gap-3">
+            {categories.filter((c) => c.toLowerCase().replace(/\s+/g, '-') !== category.toLowerCase()).map((c) => (
               <Link
-                key={t}
-                href={`/blog/tag/${t.toLowerCase().replace(/\s+/g, '-')}`}
-                className="px-3 py-1.5 bg-[#191a1b] text-[#8a8f98] rounded-full text-sm hover:bg-[#5e6ad2] hover:text-white transition-colors"
+                key={c}
+                href={`/blog/category/${c.toLowerCase().replace(/\s+/g, '-')}`}
+                className="px-4 py-2 bg-[#191a1b] text-[#8a8f98] rounded-lg text-sm hover:bg-[#5e6ad2] hover:text-white transition-colors"
               >
-                #{t}
+                {c}
               </Link>
             ))}
           </div>
