@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'BondType - Free Attachment Style Assessment',
-  description: 'Discover your attachment style with our scientifically-validated 20-question assessment. Understand how you form relationships and build healthier connections.',
+  description: 'Discover your attachment style with our scientifically-validated 15-question assessment. Understand how you form relationships and build healthier connections.',
 };
 
 // SVG Icons
@@ -83,11 +83,11 @@ export default function Home() {
             </div>
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium text-[#f7f8f8] leading-[1.05] tracking-tight mb-6" style={{ letterSpacing: '-0.03em' }}>
-              Discover Your
-              <span className="block text-[#7170ff]">
-                Attachment Style
-              </span>
+              Find Your Attachment Style — Free 15-Question Assessment
             </h1>
+            <p className="text-lg md:text-xl text-[#d0d6e0] mb-6 leading-relaxed max-w-2xl">
+              Discover whether you&apos;re <strong>Secure</strong>, <strong>Anxious</strong>, <strong>Avoidant</strong>, or <strong>Fearful-Avoidant</strong>. Based on validated psychological research. No account required. Takes 10 minutes.
+            </p>
 
             <p className="text-lg md:text-xl text-[#d0d6e0] mb-10 leading-relaxed max-w-2xl">
               Take our free 20-question assessment and understand how you form emotional bonds. 
@@ -100,17 +100,23 @@ export default function Home() {
                 className="group inline-flex items-center justify-center gap-2 bg-[#5e6ad2] text-white font-medium text-base px-8 py-3.5 rounded-md hover:bg-[#828fff] transition-colors relative"
               >
                 <span className="relative">
-                  Take Free 15-Question Test
+                  Take the Free 15-Question Assessment
                   <span className="absolute -top-2 -right-6 bg-[#7170ff] text-white text-xs font-bold px-2 py-0.5 rounded-full">FREE</span>
                 </span>
                 <ArrowRightIcon />
               </Link>
               <Link
-                href="#features"
+                href="/pricing"
                 className="btn-ghost inline-flex items-center justify-center gap-2 text-[#d0d6e0] font-medium text-base px-8 py-3.5 rounded-md hover:bg-[rgba(255,255,255,0.05)] transition-colors"
               >
-                Learn More
+                See full 36-question assessment + detailed report ($9.99)
               </Link>
+            </div>
+
+            {/* Pricing signal */}
+            <div className="mt-6 text-sm text-[#8a8f98]">
+              <span className="text-[#5e6ad2] font-medium">Free:</span> 15 questions + basic overview &nbsp;|&nbsp; 
+              <span className="text-[#7170ff] font-medium">Premium:</span> 36 questions + full detailed report
             </div>
 
             {/* Trust badges inline */}
@@ -346,7 +352,55 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ====== CTA SECTION ====== */}
+      {/* ====== FAQ SECTION ====== */}
+      <section className="py-20 bg-[#0f1011]">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-medium text-[#f7f8f8] mb-4 tracking-tight">
+              Frequently Asked Questions
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <h3 className="text-[#f7f8f8] font-medium mb-3">What is an attachment style?</h3>
+              <p className="text-[#8a8f98] text-sm leading-relaxed">
+                <strong>Attachment style</strong> is a psychological pattern that describes how you form and maintain emotional bonds in close relationships. Developed in early childhood based on your relationship with caregivers, it influences how you seek closeness, handle conflict, and trust others as an adult. The four attachment styles are: Secure, Anxious, Avoidant, and Fearful-Avoidant.
+              </p>
+            </div>
+
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <h3 className="text-[#f7f8f8] font-medium mb-3">How is this different from personality tests like MBTI or the Big Five?</h3>
+              <p className="text-[#8a8f98] text-sm leading-relaxed">
+                Personality tests describe stable traits (e.g., introversion, openness) that tend to remain consistent across contexts. Attachment style specifically describes your pattern of seeking and maintaining closeness in relationships — it is rooted in developmental psychology and supported by decades of research. The two frameworks are complementary, not interchangeable.
+              </p>
+            </div>
+
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <h3 className="text-[#f7f8f8] font-medium mb-3">Is my data private?</h3>
+              <p className="text-[#8a8f98] text-sm leading-relaxed">
+                <strong>Yes.</strong> Your responses are encrypted at rest and in transit. We don&apos;t require an account to get started — no email, no password. We never sell your personal data. See our <Link href="/privacy" className="text-[#5e6ad2] hover:underline">Privacy Policy</Link> for full details.
+              </p>
+            </div>
+
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <h3 className="text-[#f7f8f8] font-medium mb-3">What do I get with the free vs. paid version?</h3>
+              <p className="text-[#8a8f98] text-sm leading-relaxed">
+                <strong>Free:</strong> 15 questions + basic attachment style overview. <strong>Premium ($9.99):</strong> Full 36-question assessment + detailed personalized report + actionable improvement strategies. <Link href="/pricing" className="text-[#5e6ad2] hover:underline">View full pricing</Link>.
+              </p>
+            </div>
+
+            <div className="bg-[#191a1b] rounded-xl p-6 border border-[rgba(255,255,255,0.08)]">
+              <h3 className="text-[#f7f8f8] font-medium mb-3">Can my attachment style change over time?</h3>
+              <p className="text-[#8a8f98] text-sm leading-relaxed">
+                <strong>Yes.</strong> While attachment styles are relatively stable, research shows they can evolve through self-awareness, therapy, and consistent healthy relationship experiences. Understanding your attachment style is the first step toward building more secure patterns.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====== CTA SECTION ======*/
       <section className="py-24 bg-[#08090a] relative">
         <div className="absolute inset-0">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#5e6ad2]/5 rounded-full blur-[120px]" />
@@ -377,5 +431,99 @@ export default function Home() {
       </section>
 
     </div>
+
+    {/* Quiz Schema for SEO */}
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Quiz",
+          "name": "BondType Attachment Style Assessment",
+          "description": "A scientifically-validated psychological assessment that identifies your attachment style (Secure, Anxious, Avoidant, or Fearful-Avoidant) based on your emotional responses and relationship patterns.",
+          "url": "https://bondtype.com",
+          "about": {
+            "@type": "Thing",
+            "name": "Attachment Style",
+            "description": "A psychological concept describing patterns of emotional bonding and relationship behavior developed in early childhood."
+          },
+          "educationalLevel": "General audiences",
+          "assesses": "Attachment style and emotional bonding patterns",
+          "provider": {
+            "@type": "Organization",
+            "name": "BondType",
+            "url": "https://bondtype.com"
+          }
+        })
+      }}
+    />
+
+    {/* Organization Schema */}
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "BondType",
+          "url": "https://bondtype.com",
+          "description": "Science-backed attachment style assessment platform."
+        })
+      }}
+    />
+
+    {/* FAQPage Schema */}
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is an attachment style?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Attachment style is a psychological pattern that describes how you form and maintain emotional bonds in close relationships. Developed in early childhood, it influences how you seek closeness, handle conflict, and trust others. The four attachment styles are: Secure, Anxious, Avoidant, and Fearful-Avoidant."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How is this different from personality tests like MBTI?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Personality tests describe stable traits. Attachment style specifically describes your pattern of seeking and maintaining closeness in relationships, rooted in developmental psychology and supported by decades of research."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is my data private?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Responses are encrypted at rest and in transit. No account required. We never sell your personal data."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What do I get with the free vs. paid version?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Free: 15 questions + basic overview. Premium ($9.99): Full 36-question assessment + detailed personalized report."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can my attachment style change over time?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. While relatively stable, attachment styles can evolve through self-awareness, therapy, and healthy relationship experiences."
+              }
+            }
+          ]
+        })
+      }}
+    />
+  </div>
   );
 }
