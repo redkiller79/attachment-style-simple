@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'BondType - Free Attachment Style Assessment',
-  description: 'Discover your attachment style with our scientifically-validated 20-question assessment. Understand how you form relationships and build healthier connections.',
+  description: 'Discover your attachment style with our scientifically-validated 15-question assessment. Understand how you form relationships and build healthier connections.',
 };
 
 // SVG Icons
@@ -90,7 +90,7 @@ export default function Home() {
             </h1>
 
             <p className="text-lg md:text-xl text-[#d0d6e0] mb-10 leading-relaxed max-w-2xl">
-              Take our free 20-question assessment and understand how you form emotional bonds. 
+              Take our free 15-question assessment and understand how you form emotional bonds. 
               Get personalized insights to build healthier relationships.
             </p>
 
@@ -228,7 +228,7 @@ export default function Home() {
               </div>
               <h3 className="text-[#f7f8f8] font-medium mb-1.5">Quick & Easy</h3>
               <p className="text-[#8a8f98] text-sm leading-relaxed">
-                Just 20 questions, takes about 10 minutes. No account needed to get started.
+                Just 15 questions, takes about 10 minutes. No account needed to get started.
               </p>
             </div>
 
