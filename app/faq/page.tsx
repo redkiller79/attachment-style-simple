@@ -50,7 +50,7 @@ export default function FAQPage() {
               <div className="text-[#F8FAFC]/80 space-y-3">
                 <p><strong>Secure:</strong> Comfortable with intimacy and independence, trusts others reliably.</p>
                 <p><strong>Anxious:</strong> Craves closeness but fears abandonment, seeks frequent reassurance.</p>
-                <p><strong>Avoidant:</strong> Values independence over intimacy,习惯性地 keeps emotional distance.</p>
+                <p><strong>Avoidant:</strong> Values independence over intimacy, habitually keeps emotional distance.</p>
                 <p><strong>Fearful-Avoidant:</strong> Wants closeness but is afraid of vulnerability, resulting in mixed or contradictory behaviors.</p>
                 <p className="text-sm mt-4">Most people have a dominant style, though blends are common.</p>
               </div>
