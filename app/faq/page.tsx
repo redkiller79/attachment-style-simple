@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'FAQ - Frequently Asked Questions | BondType',
@@ -79,7 +80,7 @@ export default function FAQPage() {
             <div className="bg-[#0D1B2A] rounded-2xl p-8 shadow-lg border border-[#5B4B8A]/30">
               <h2 className="text-2xl font-bold text-[#F8FAFC] mb-4">How much does BondType cost? Is it free?</h2>
               <p className="text-[#F8FAFC]/80">
-                BondType has a <strong>free tier</strong> that gives you an overview of your attachment style. <strong>Premium features</strong> (detailed analysis, personalized insights, relationship recommendations) require a paid subscription. View current pricing on our <a href="/pricing" className="text-[#2DD4BF] hover:underline">Pricing page</a>.
+                BondType has a <strong>free tier</strong> that gives you an overview of your attachment style. <strong>Premium features</strong> (detailed analysis, personalized insights, relationship recommendations) require a paid subscription. View current pricing on our <Link href="/pricing" className="text-[#2DD4BF] hover:underline cursor-pointer">Pricing page</Link>.
               </p>
               <p className="text-[#F8FAFC]/80 mt-4">
                 <strong>Cancel anytime</strong> from your account settings — no need to contact support.
@@ -106,7 +107,7 @@ export default function FAQPage() {
             <div className="bg-[#0D1B2A] rounded-2xl p-8 shadow-lg border border-[#5B4B8A]/30">
               <h2 className="text-2xl font-bold text-[#F8FAFC] mb-4">Is my data private?</h2>
               <p className="text-[#F8FAFC]/80">
-                <strong>Yes.</strong> Your assessment responses and results are encrypted at rest and in transit. We do not sell your personal data. You can request full deletion of your account and data at any time by emailing <a href="mailto:help@bondtype.com" className="text-[#2DD4BF] hover:underline">help@bondtype.com</a>. See our <a href="/privacy" className="text-[#2DD4BF] hover:underline">Privacy Policy</a> for full details.
+                <strong>Yes.</strong> Your assessment responses and results are encrypted at rest and in transit. We do not sell your personal data. You can request full deletion of your account and data at any time by emailing <a href="mailto:help@bondtype.com" className="text-[#2DD4BF] hover:underline cursor-pointer">help@bondtype.com</a>. See our <Link href="/privacy" className="text-[#2DD4BF] hover:underline cursor-pointer">Privacy Policy</Link> for full details.
               </p>
             </div>
 
@@ -114,7 +115,7 @@ export default function FAQPage() {
             <div className="bg-[#0D1B2A] rounded-2xl p-8 shadow-lg border border-[#5B4B8A]/30">
               <h2 className="text-2xl font-bold text-[#F8FAFC] mb-4">Does BondType share my data with third parties?</h2>
               <p className="text-[#F8FAFC]/80">
-                We share data only with service providers needed to operate the service (e.g., payment processing, cloud infrastructure). We do <strong>not</strong> sell or share your data for advertising purposes. Full details are in our <a href="/privacy" className="text-[#2DD4BF] hover:underline">Privacy Policy</a>.
+                We share data only with service providers needed to operate the service (e.g., payment processing, cloud infrastructure). We do <strong>not</strong> sell or share your data for advertising purposes. Full details are in our <Link href="/privacy" className="text-[#2DD4BF] hover:underline cursor-pointer">Privacy Policy</Link>.
               </p>
             </div>
 
@@ -154,7 +155,7 @@ export default function FAQPage() {
             <div className="bg-[#0D1B2A] rounded-2xl p-8 shadow-lg border border-[#5B4B8A]/30">
               <h2 className="text-2xl font-bold text-[#F8FAFC] mb-4">What if my results don't feel like me?</h2>
               <p className="text-[#F8FAFC]/80">
-                This is common. Self-assessment tools are only as accurate as your self-awareness at the time of taking the test — and many people have a blend of attachment styles. If your results feel off, consider: (1) Were you answering honestly or what you thought was ideal? (2) Do you have traits from more than one style? (3) Has your style shifted since childhood? You can <a href="/assessment" className="text-[#2DD4BF] hover:underline">retake the assessment</a>, explore your blend of styles, or speak with a therapist for deeper insight.
+                This is common. Self-assessment tools are only as accurate as your self-awareness at the time of taking the test — and many people have a blend of attachment styles. If your results feel off, consider: (1) Were you answering honestly or what you thought was ideal? (2) Do you have traits from more than one style? (3) Has your style shifted since childhood? You can <Link href="/assessment" className="text-[#2DD4BF] hover:underline cursor-pointer">retake the assessment</Link>, explore your blend of styles, or speak with a therapist for deeper insight.
               </p>
             </div>
 
@@ -180,12 +181,12 @@ export default function FAQPage() {
           <p className="text-[#F8FAFC]/80 mb-8 max-w-2xl mx-auto">
             Take our free assessment and gain valuable insights into your relationship patterns.
           </p>
-          <a 
+          <Link 
             href="/assessment" 
-            className="inline-block bg-gradient-to-r from-[#2DD4BF] to-[#5B4B8A] text-white font-bold px-8 py-4 rounded-xl hover:opacity-90 transition-opacity text-lg"
+            className="inline-block bg-gradient-to-r from-[#2DD4BF] to-[#5B4B8A] text-white font-bold px-8 py-4 rounded-xl hover:opacity-90 transition-opacity text-lg cursor-pointer"
           >
             Take Free Assessment
-          </a>
+          </Link>
         </div>
       </section>
 
